@@ -16,7 +16,13 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    /* Register push notification */
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] > 8.0) {
+        [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    } else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)];
+    }
     return YES;
 }
 
@@ -123,5 +129,25 @@
         }
     }
 }
+
+#pragma mark - NOTIFICATION DELEGATE
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken{
+    NSString *tokenStr = [deviceToken description];
+    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@">" withString:@""];
+    tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
+    NSLog(@"deviceToken: %@", deviceToken);
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
+    NSLog(@"Failed to register with error : %@", error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    application.applicationIconBadgeNumber = 0;
+    NSString *msg = userInfo[@"aps"][@"alert"];
+    [Common showAlertView:APP_NAME message:msg delegate:nil cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+}
+
 
 @end

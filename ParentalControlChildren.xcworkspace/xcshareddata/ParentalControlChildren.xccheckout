@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>04996D28-6151-43E9-8A49-25C4F1E339A5</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ParentalControlChildren</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3C73EB666EE2532EF0E05816764C264A43EC8379</key>
+		<string>https://github.com/Kent-Mbn/ParentalControlChildren.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ParentalControlChildren.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3C73EB666EE2532EF0E05816764C264A43EC8379</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Kent-Mbn/ParentalControlChildren.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3C73EB666EE2532EF0E05816764C264A43EC8379</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3C73EB666EE2532EF0E05816764C264A43EC8379</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ParentalControlChildren</string>
+		</dict>
+	</array>
+</dict>
+</plist>
