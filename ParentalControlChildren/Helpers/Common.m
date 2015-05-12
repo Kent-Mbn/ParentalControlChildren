@@ -47,5 +47,14 @@
     imgV.contentMode = UIViewContentModeScaleAspectFill;
 }
 
++ (void) updateDeviceToken:(NSString *) newDeviceToken {
+    [[NSUserDefaults standardUserDefaults] setObject:newDeviceToken forKey:@"deviceToken"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (NSString *) getDeviceToken {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"deviceToken"];
+}
+
 
 @end

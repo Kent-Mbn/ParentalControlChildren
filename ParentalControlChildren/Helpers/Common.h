@@ -16,5 +16,8 @@
 +(void) showAlertView:(NSString *)title message:(NSString *)message delegate:(UIViewController *)delegate cancelButtonTitle:(NSString *)cancelButtonTitle arrayTitleOtherButtons:(NSArray *)arrayTitleOtherButtons tag:(int)tag;
 + (CLLocationCoordinate2D) get2DCoordFromString:(NSString*)coordString;
 + (void) circleImageView:(UIView *) imgV;
++ (void) updateDeviceToken:(NSString *) newDeviceToken;
++ (NSString *) getDeviceToken;
+
 
 @end
