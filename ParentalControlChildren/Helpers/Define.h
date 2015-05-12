@@ -17,5 +17,10 @@
 #pragma mark - MESSAGE
 #define MSS_NOTICE_SEND_SMS @"Are you sure send SMS?"
 
+#define MSS_REGISTER_INVALID_PHONE_NUMBER @"Phone Number is invalid."
+#define MSS_REGISTER_INVALID_FULL_NAME @"Full name is invalid."
+#define MSS_REGISTER_INVALID_EMAIL @"Email is invalid."
+
+
 #pragma mark - ADDRESS BOOK
 #define MSS_DENIED @"You must give the app permission to add the contact first."

@@ -18,6 +18,7 @@
 + (void) circleImageView:(UIView *) imgV;
 + (void) updateDeviceToken:(NSString *) newDeviceToken;
 + (NSString *) getDeviceToken;
++ (BOOL) isValidEmail:(NSString *)checkString;
 
 
 @end
