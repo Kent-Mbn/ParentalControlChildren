@@ -11,6 +11,7 @@
 #import <MapKit/MapKit.h>
 #import "Common.h"
 #import <CoreLocation/CoreLocation.h>
+#import "UserDefault.h"
 
 typedef NS_ENUM(NSInteger, NSTypeMap) {
     NSTypeMapStandard = 0,

@@ -9,6 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "Common.h"
 #import "Define.h"
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
+#import "APIService.h"
+#import "UserDefault.h"
 
 @interface RegisterVC : UIViewController<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UIView *viewBGRegister;

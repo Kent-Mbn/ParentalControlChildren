@@ -30,6 +30,7 @@
 		D98F6DDF1B00A6EA00F1D855 /* ic_set_area@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DDB1B00A6EA00F1D855 /* ic_set_area@2x.png */; };
 		D98F6DE21B00ACCD00F1D855 /* ic_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DE01B00ACCD00F1D855 /* ic_delete.png */; };
 		D98F6DE31B00ACCD00F1D855 /* ic_delete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DE11B00ACCD00F1D855 /* ic_delete@2x.png */; };
+		D9C5A8021B02FB3D00E6C72C /* UserDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C5A8011B02FB3D00E6C72C /* UserDefault.m */; };
 		D9DDEE751AFCA24000848B57 /* avatar-female-contact.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE561AFCA24000848B57 /* avatar-female-contact.png */; };
 		D9DDEE761AFCA24000848B57 /* avatar-Male-contact.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE571AFCA24000848B57 /* avatar-Male-contact.png */; };
 		D9DDEE771AFCA24000848B57 /* box-check.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE581AFCA24000848B57 /* box-check.png */; };
@@ -127,6 +128,8 @@
 		D98F6DDB1B00A6EA00F1D855 /* ic_set_area@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_set_area@2x.png"; sourceTree = "<group>"; };
 		D98F6DE01B00ACCD00F1D855 /* ic_delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_delete.png; sourceTree = "<group>"; };
 		D98F6DE11B00ACCD00F1D855 /* ic_delete@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_delete@2x.png"; sourceTree = "<group>"; };
+		D9C5A8001B02FB3D00E6C72C /* UserDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDefault.h; sourceTree = "<group>"; };
+		D9C5A8011B02FB3D00E6C72C /* UserDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefault.m; sourceTree = "<group>"; };
 		D9DDEE561AFCA24000848B57 /* avatar-female-contact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "avatar-female-contact.png"; sourceTree = "<group>"; };
 		D9DDEE571AFCA24000848B57 /* avatar-Male-contact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "avatar-Male-contact.png"; sourceTree = "<group>"; };
 		D9DDEE581AFCA24000848B57 /* box-check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "box-check.png"; sourceTree = "<group>"; };
@@ -352,6 +355,8 @@
 		D9DDEE531AFCA15F00848B57 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D9C5A8001B02FB3D00E6C72C /* UserDefault.h */,
+				D9C5A8011B02FB3D00E6C72C /* UserDefault.m */,
 				D9503FA11B01DC2B00252DD1 /* APIService.h */,
 				D9DDEE941AFCA2F400848B57 /* Define.h */,
 				D9DDEE951AFCA30D00848B57 /* Common.h */,
@@ -622,6 +627,7 @@
 				D23AB6B61AFE552B009FAD33 /* PersonContactObj.m in Sources */,
 				D2E8B7AF1AFE13A200904B32 /* SettingsVC.m in Sources */,
 				D9DDEE9D1AFCA53500848B57 /* HomeVC.m in Sources */,
+				D9C5A8021B02FB3D00E6C72C /* UserDefault.m in Sources */,
 				D9DDEE971AFCA30D00848B57 /* Common.m in Sources */,
 				D903E5611AF9B9BE00760189 /* main.m in Sources */,
 				D23AB6B91AFE5FF3009FAD33 /* AddPhoneNumberCell.m in Sources */,

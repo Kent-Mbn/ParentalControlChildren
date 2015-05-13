@@ -38,7 +38,34 @@
 }
 
 - (void) callWSRegister {
-    
+    [Common showLoadingViewGlobal:nil];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            @"email":_tfEmail.text,
+                                            @"fullname":_tfFullName.text,
+                                            @"phone_number":_tfPhoneNumber.text,
+                                            @"register_id":[Common getDeviceToken],
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_DEVICE_REGISTER));
+    [manager POST:URL_SERVER_API(API_DEVICE_REGISTER) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideLoadingViewGlobal];
+        NSLog(@"response LOGIN: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            //Save infor to userdefault
+            NSArray *arrRespone = (NSArray *) responseObject;
+            [[UserDefault user] setChild_id:arrRespone[0][@"device_id"]];
+            [[UserDefault user] setEmail:_tfEmail.text];
+            [[UserDefault user] setFull_name:_tfFullName.text];
+            [[UserDefault user] setToken_device:[Common getDeviceToken]];
+            
+            [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];
+        } else {
+            [Common showAlertView:APP_NAME message:MSS_REGISTER_FAILDED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideLoadingViewGlobal];
+        [Common showAlertView:APP_NAME message:MSS_REGISTER_FAILDED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+    }];
 }
 
 
@@ -78,7 +105,7 @@
 - (IBAction)actionRegister:(id)sender {
     if ([self validInPut]) {
         [self actionHideKeyboard:nil];
-        [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];
+        [self callWSRegister];
     }
 }
 

@@ -20,6 +20,11 @@
     [self initGetCurrentLocation];
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    
+}
+
+
 #pragma mark - ACTION
 - (IBAction)actionEmergency:(id)sender {
     [Common showAlertView:APP_NAME message:MSS_NOTICE_SEND_SMS delegate:self cancelButtonTitle:@"Cancel" arrayTitleOtherButtons:@[@"Yes"] tag:0];

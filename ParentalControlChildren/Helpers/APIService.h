@@ -8,15 +8,16 @@
 
 //------SETUP SERVER IP------//
 
-//SERVER OF ODC TEAM
+#define SERVER_IP   @"http://117.3.65.103/parental-control/public"
+#define SERVER_PORT @"8015"
 
-#define SERVER_IP   @"http://108.61.202.156"
-#define SERVER_PORT @"80"
-
-#define URL_SERVER_API_FULL [NSString stringWithFormat:@"%@:%@", SERVER_IP, SERVER_PORT]
+#define URL_SERVER_API_FULL [NSString stringWithFormat:@"%@", SERVER_IP]
 #define URL_SERVER_API(method) [NSString stringWithFormat:@"%@%@",URL_SERVER_API_FULL,method]
 
+#define API_DEVICE_REGISTER @"/device/register"
 
+
+/*
 #define API_USER_LOGIN @"/user/auth"
 #define API_GET_USER_POST_LIST @"/user/stat"
 #define API_COMPOSE_POST @"/user/post"
@@ -34,6 +35,7 @@
 
 #define API_GET_PROFILE(user_id) [NSString stringWithFormat:@"/user/%@", user_id]
 #define KEY_RESPONE_LOGIN_SUCCESS @"success"
+ */
 
 
 

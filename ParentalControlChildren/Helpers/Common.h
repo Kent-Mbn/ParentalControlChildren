@@ -9,6 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
+#import "SVProgressHUD.h"
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
+#import "Define.h"
 
 @interface Common : NSObject
 
@@ -19,6 +23,14 @@
 + (void) updateDeviceToken:(NSString *) newDeviceToken;
 + (NSString *) getDeviceToken;
 + (BOOL) isValidEmail:(NSString *)checkString;
+
++ (AFHTTPRequestOperationManager *)AFHTTPRequestOperationManagerReturn;
++ (BOOL) validateRespone:(id) respone;
+
++ (void) showNetworkActivityIndicator;
++ (void) hideNetworkActivityIndicator;
++ (void) showLoadingViewGlobal:(NSString *) titleaLoading;
++ (void) hideLoadingViewGlobal;
 
 
 @end

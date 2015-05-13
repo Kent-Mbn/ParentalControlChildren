@@ -69,4 +69,50 @@
     return [emailTest evaluateWithObject:checkString];
 }
 
++ (void) showLoadingViewGlobal:(NSString *) titleaLoading {
+    [SVProgressHUD setBackgroundColor:[UIColor blackColor]];
+    [SVProgressHUD setForegroundColor:[UIColor whiteColor]];
+    if (titleaLoading != nil) {
+        [SVProgressHUD showWithStatus:titleaLoading maskType:SVProgressHUDMaskTypeGradient];
+    } else {
+        [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeClear];
+    }
+}
+
++ (void) showNetworkActivityIndicator
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
+}
+
++ (void) hideNetworkActivityIndicator
+{
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
++ (void) hideLoadingViewGlobal {
+    [SVProgressHUD dismiss];
+}
+
++ (AFHTTPRequestOperationManager *)AFHTTPRequestOperationManagerReturn {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    //manager.requestSerializer = [AFJSONRequestSerializer serializer];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    //[manager.requestSerializer setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObject:@"application/json"];
+    [manager.requestSerializer setTimeoutInterval:30];
+    return manager;
+}
+
++ (BOOL) validateRespone:(id) respone {
+    NSArray *arrRespone = (NSArray *)respone;
+    NSDictionary *dicRespone = (NSDictionary *)[arrRespone objectAtIndex:0];
+    if (dicRespone) {
+        if ([dicRespone[@"resultcode"] intValue] == CODE_RESPONE_SUCCESS) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+
 @end
