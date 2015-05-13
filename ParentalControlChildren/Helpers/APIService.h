@@ -15,6 +15,7 @@
 #define URL_SERVER_API(method) [NSString stringWithFormat:@"%@%@",URL_SERVER_API_FULL,method]
 
 #define API_DEVICE_REGISTER @"/device/register"
+#define API_DEVICE_CONFIRM_REQUEST_PAIR(parent_id, child_id) [NSString stringWithFormat:@"/userdevice/updatestatus/%@/%@",parent_id, child_id]
 
 
 /*

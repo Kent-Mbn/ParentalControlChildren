@@ -24,6 +24,9 @@
 #define MSS_REGISTER_INVALID_EMAIL @"Email is invalid."
 #define MSS_REGISTER_FAILDED @"Register failed!"
 
+#define MSS_CONFIRM_FAILED @"Confirm failed!"
+#define MSS_CONFIRM_SUCCESS @"Confirm successfully!"
+
 
 #pragma mark - ADDRESS BOOK
 #define MSS_DENIED @"You must give the app permission to add the contact first."

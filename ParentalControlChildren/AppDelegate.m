@@ -137,6 +137,7 @@
     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@">" withString:@""];
     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
     [Common updateDeviceToken:tokenStr];
+    NSLog(@"Device Token Child App: %@", tokenStr);
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error{
@@ -144,9 +145,43 @@
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
+    NSLog(@"userInfo: %@", userInfo);
     application.applicationIconBadgeNumber = 0;
     NSString *msg = userInfo[@"aps"][@"alert"];
-    [Common showAlertView:APP_NAME message:msg delegate:nil cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+    [Common showAlertView:APP_NAME message:msg delegate:self cancelButtonTitle:@"Cancel" arrayTitleOtherButtons:@[@"Confirm"] tag:1];
+    strPusherId = userInfo[@"aps"][@"pusher_id"];
+    strChildId = [UserDefault user].child_id;
+}
+
+#pragma mark - FUNCTIONS
+- (void) callWSConfirmAddPair:(NSString *) strParentId andStrChildId:(NSString *) strChildrentId {
+    [Common showLoadingViewGlobal:nil];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_DEVICE_CONFIRM_REQUEST_PAIR(strParentId, strChildrentId)));
+    [manager POST:URL_SERVER_API(API_DEVICE_CONFIRM_REQUEST_PAIR(strParentId, strChildrentId)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideLoadingViewGlobal];
+        NSLog(@"response: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            [Common showAlertView:APP_NAME message:MSS_CONFIRM_SUCCESS delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+        } else {
+            [Common showAlertView:APP_NAME message:MSS_CONFIRM_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideLoadingViewGlobal];
+        [Common showAlertView:APP_NAME message:MSS_CONFIRM_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+    }];
+}
+
+#pragma mark - ALERT DELEGATE
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1 && alertView.tag == 1) {
+        if (strChildId.length > 0 && strPusherId.length > 0) {
+            [self callWSConfirmAddPair:strPusherId andStrChildId:strChildId];
+        }
+    }
 }
 
 

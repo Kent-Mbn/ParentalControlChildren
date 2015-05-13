@@ -10,8 +10,15 @@
 #import <CoreData/CoreData.h>
 #import "Common.h"
 #import "Define.h"
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
+#import "UserDefault.h"
+#import "APIService.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate> {
+    NSString *strPusherId;
+    NSString *strChildId;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 

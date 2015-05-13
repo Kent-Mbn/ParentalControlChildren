@@ -17,7 +17,7 @@
 @interface Common : NSObject
 
 +(void)roundView:(UIView *) uView andRadius:(float) radius;
-+(void) showAlertView:(NSString *)title message:(NSString *)message delegate:(UIViewController *)delegate cancelButtonTitle:(NSString *)cancelButtonTitle arrayTitleOtherButtons:(NSArray *)arrayTitleOtherButtons tag:(int)tag;
++(void) showAlertView:(NSString *)title message:(NSString *)message delegate:(id)delegate cancelButtonTitle:(NSString *)cancelButtonTitle arrayTitleOtherButtons:(NSArray *)arrayTitleOtherButtons tag:(int)tag;
 + (CLLocationCoordinate2D) get2DCoordFromString:(NSString*)coordString;
 + (void) circleImageView:(UIView *) imgV;
 + (void) updateDeviceToken:(NSString *) newDeviceToken;
