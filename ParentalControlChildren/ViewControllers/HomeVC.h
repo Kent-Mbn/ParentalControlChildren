@@ -13,6 +13,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import "UserDefault.h"
 #import "AppDelegate.h"
+#import "AFNetworking.h"
+#import "UIKit+AFNetworking.h"
 
 typedef NS_ENUM(NSInteger, NSTypeMap) {
     NSTypeMapStandard = 0,

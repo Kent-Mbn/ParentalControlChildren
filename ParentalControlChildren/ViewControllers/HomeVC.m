@@ -51,7 +51,7 @@
     }
 }
 
--(void) addAndFocusPinViewToMap:(CLLocation *) locationPoint {
+-(void) addAndFocusPinViewToMapAndUpdateToServer:(CLLocation *) locationPoint {
     //Remove all pin to map before add new pin
     [_mapView removeAnnotations:_mapView.annotations];
     
@@ -86,13 +86,38 @@
         
         MKPointAnnotation *pointAnn = [[MKPointAnnotation alloc] init];
         pointAnn.coordinate = point;
-        pointAnn.title = [UserDefault user].full_name;
+        pointAnn.title = @"Chau";
         pointAnn.subtitle = placemark.name;
         [_mapView addAnnotation:pointAnn];
         
         MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(point, 1000, 1000);
         [_mapView setRegion:[_mapView regionThatFits:region] animated:YES];
         [_mapView selectAnnotation:pointAnn animated:YES];
+        
+        //Update current location to server
+        [self callWSUpdateHistoryLocation:point andAddress:placemark.name];
+    }];
+}
+
+- (void) callWSUpdateHistoryLocation:(CLLocationCoordinate2D)curLocation andAddress:(NSString *)strAddr {
+    [Common showNetworkActivityIndicator];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            @"latitude":@(curLocation.latitude),
+                                            @"longitude":@(curLocation.longitude),
+                                            @"address":strAddr,
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideNetworkActivityIndicator];
+        NSLog(@"response: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            //Success
+        } else {
+            //Return error
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideNetworkActivityIndicator];
     }];
 }
 
@@ -118,13 +143,13 @@
     if (dateOfLastLocation == nil) {
         dateOfLastLocation = location.timestamp;
         NSLog(@"Location: %f", location.coordinate.latitude);
-        [self addAndFocusPinViewToMap:location];
+        [self addAndFocusPinViewToMapAndUpdateToServer:location];
     } else {
         NSDate *locationDate = location.timestamp;
         NSTimeInterval interval = [locationDate timeIntervalSinceDate:dateOfLastLocation];
         if (abs(interval) > (5 * 60)) {
             NSLog(@"Location: %f", location.coordinate.latitude);
-            [self addAndFocusPinViewToMap:location];
+            [self addAndFocusPinViewToMapAndUpdateToServer:location];
         }
     }
 }
