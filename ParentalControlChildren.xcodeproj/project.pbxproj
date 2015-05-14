@@ -484,6 +484,11 @@
 					D903E55A1AF9B9BE00760189 = {
 						CreatedOnToolsVersion = 6.2;
 						DevelopmentTeam = 78USBB6475;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					D903E5761AF9B9BE00760189 = {
 						CreatedOnToolsVersion = 6.2;

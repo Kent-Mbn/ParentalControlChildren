@@ -26,6 +26,10 @@
 	<string>Tracking current location of your children</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Tracking current location of your children</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>

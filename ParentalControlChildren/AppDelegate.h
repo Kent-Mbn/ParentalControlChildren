@@ -14,10 +14,17 @@
 #import "UIKit+AFNetworking.h"
 #import "UserDefault.h"
 #import "APIService.h"
+#import <CoreLocation/CoreLocation.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate, CLLocationManagerDelegate> {
     NSString *strPusherId;
     NSString *strChildId;
+    
+    /*
+    CLLocationManager *locationManager;
+    NSTimer *timerTrackingLocation;
+    NSDate *dateOfLastLocation;
+     */
 }
 
 @property (strong, nonatomic) UIWindow *window;
@@ -29,6 +36,10 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
+/*
+- (void) startTrackingLocation;
+- (void) stopTrackingLocation;
+ */
 
 @end
 

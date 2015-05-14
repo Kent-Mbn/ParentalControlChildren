@@ -12,6 +12,7 @@
 #import "Common.h"
 #import <CoreLocation/CoreLocation.h>
 #import "UserDefault.h"
+#import "AppDelegate.h"
 
 typedef NS_ENUM(NSInteger, NSTypeMap) {
     NSTypeMapStandard = 0,
@@ -21,6 +22,7 @@ typedef NS_ENUM(NSInteger, NSTypeMap) {
 @interface HomeVC : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate> {
     NSTypeMap *typeMap;
     CLLocationManager *locationManager;
+    NSDate *dateOfLastLocation;
 }
 @property (weak, nonatomic) IBOutlet UIButton *btTypeMap;
 @property (weak, nonatomic) IBOutlet UIView *viewBottomBar;

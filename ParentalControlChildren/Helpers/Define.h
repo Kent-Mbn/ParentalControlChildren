@@ -9,9 +9,12 @@
 // Master color
 #define masterColor [UIColor colorWithRed:49/255.0f green:144/255.0f blue:181/255.0f alpha:1.0]
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+#define timeTrackingLocation 5
 
 #pragma mark - CODE RESPONE FROM SERVER
 #define CODE_RESPONE_SUCCESS 0
+
+#define APP_DELEGATE (AppDelegate *)[UIApplication sharedApplication].delegate
 
 #define APP_NAME @"Child App"
 

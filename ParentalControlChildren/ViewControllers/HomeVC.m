@@ -14,9 +14,6 @@
     typeMap = NSTypeMapStandard;
     [self changeStatusOfButtonMapType];
     _viewBottomBar.backgroundColor = masterColor;
-    //CLLocationCoordinate2D cooPoint1 = [Common get2DCoordFromString:@"16.046123,108.203659"];
-    //[self addAndFocusPinViewToMap:cooPoint1];
-    
     [self initGetCurrentLocation];
 }
 
@@ -54,16 +51,49 @@
     }
 }
 
--(void) addAndFocusPinViewToMap:(CLLocationCoordinate2D) point {
-    MKPointAnnotation *pointAnn = [[MKPointAnnotation alloc] init];
-    pointAnn.coordinate = point;
-    pointAnn.title = @"Huynh Phong Chau";
-    pointAnn.subtitle = @"Da Nang";
-    [_mapView addAnnotation:pointAnn];
+-(void) addAndFocusPinViewToMap:(CLLocation *) locationPoint {
+    //Remove all pin to map before add new pin
+    [_mapView removeAnnotations:_mapView.annotations];
     
-    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(point, 1000, 1000);
-    [_mapView setRegion:[_mapView regionThatFits:region] animated:YES];
-    [_mapView selectAnnotation:pointAnn animated:YES];
+    CLLocationCoordinate2D point = locationPoint.coordinate;
+    
+    //Get Address
+    [Common showLoadingViewGlobal:nil];
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    [geocoder reverseGeocodeLocation:locationPoint completionHandler:^(NSArray *placemarks, NSError *error) {
+        [Common hideLoadingViewGlobal];
+        if (error) {
+            return;
+        }
+        NSLog(@"Array place mark: %@", placemarks);
+        CLPlacemark *placemark = [placemarks objectAtIndex:0];
+        
+        /*
+         NSLog(@"name: %@", placemark.name);
+         NSLog(@"thoroughfare: %@", placemark.thoroughfare);
+         NSLog(@"subThoroughfare: %@", placemark.subThoroughfare);
+         NSLog(@"locality: %@", placemark.locality);
+         NSLog(@"subLocality: %@", placemark.subLocality);
+         NSLog(@"administrativeArea: %@", placemark.administrativeArea);
+         NSLog(@"subAdministrativeArea: %@", placemark.subAdministrativeArea);
+         NSLog(@"postalCode: %@", placemark.postalCode);
+         NSLog(@"ISOcountryCode: %@", placemark.ISOcountryCode);
+         NSLog(@"country: %@", placemark.country);
+         NSLog(@"inlandWater: %@", placemark.inlandWater);
+         NSLog(@"ocean: %@", placemark.ocean);
+         NSLog(@"areasOfInterest: %@", placemark.areasOfInterest);
+         */
+        
+        MKPointAnnotation *pointAnn = [[MKPointAnnotation alloc] init];
+        pointAnn.coordinate = point;
+        pointAnn.title = [UserDefault user].full_name;
+        pointAnn.subtitle = placemark.name;
+        [_mapView addAnnotation:pointAnn];
+        
+        MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(point, 1000, 1000);
+        [_mapView setRegion:[_mapView regionThatFits:region] animated:YES];
+        [_mapView selectAnnotation:pointAnn animated:YES];
+    }];
 }
 
 #pragma mark - LOCATION
@@ -79,18 +109,24 @@
     [locationManager startUpdatingLocation];
 }
 
-- (BOOL) checkPermissonGetCurrentLocation {
-    return YES;
-}
-
 - (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     
 }
 
 - (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     CLLocation* location = [locations lastObject];
-    [self addAndFocusPinViewToMap:location.coordinate];
-    [locationManager stopUpdatingLocation];
+    if (dateOfLastLocation == nil) {
+        dateOfLastLocation = location.timestamp;
+        NSLog(@"Location: %f", location.coordinate.latitude);
+        [self addAndFocusPinViewToMap:location];
+    } else {
+        NSDate *locationDate = location.timestamp;
+        NSTimeInterval interval = [locationDate timeIntervalSinceDate:dateOfLastLocation];
+        if (abs(interval) > (5 * 60)) {
+            NSLog(@"Location: %f", location.coordinate.latitude);
+            [self addAndFocusPinViewToMap:location];
+        }
+    }
 }
 
 #pragma mark - MAP DELEGATE
@@ -110,7 +146,7 @@
             customPinView.image = [UIImage imageNamed:@""];
             //customPinView.pinColor = MKPinAnnotationColorRed;
         }
-        customPinView.animatesDrop = YES;
+        customPinView.animatesDrop = NO;
         customPinView.canShowCallout = YES;
         return customPinView;
         

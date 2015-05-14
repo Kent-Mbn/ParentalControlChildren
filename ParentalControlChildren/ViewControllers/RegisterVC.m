@@ -103,10 +103,12 @@
 #pragma mark - ACTION
 
 - (IBAction)actionRegister:(id)sender {
+    /*
     if ([self validInPut]) {
         [self actionHideKeyboard:nil];
         [self callWSRegister];
-    }
+    }*/
+    [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];
 }
 
 - (IBAction)actionHideKeyboard:(id)sender {

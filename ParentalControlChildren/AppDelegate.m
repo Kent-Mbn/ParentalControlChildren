@@ -23,6 +23,8 @@
     } else {
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)];
     }
+    
+    //[self initLocationManager];
     return YES;
 }
 
@@ -184,5 +186,51 @@
     }
 }
 
+/*
+#pragma mark - TRACKING LOCATION
+- (void) initLocationManager {
+    if (nil == locationManager)
+        locationManager = [[CLLocationManager alloc] init];
+    locationManager.delegate = self;
+    locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest; // 100 m
+    if(IS_OS_8_OR_LATER) {
+        [locationManager requestAlwaysAuthorization];
+    }
+}
+
+- (void) startTrackingLocation {
+    //timerTrackingLocation = [NSTimer scheduledTimerWithTimeInterval:timeTrackingLocation target:self selector:@selector(updateLocation:) userInfo:nil repeats:YES];
+    [locationManager startUpdatingLocation];
+}
+
+- (void) stopTrackingLocation {
+    [timerTrackingLocation invalidate];
+    timerTrackingLocation = nil;
+}
+
+-(void)updateLocation:(NSTimer *)timer {
+    [locationManager startUpdatingLocation];
+}
+
+- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    
+}
+
+- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+    CLLocation* location = [locations lastObject];
+    if (dateOfLastLocation == nil) {
+        dateOfLastLocation = location.timestamp;
+        NSLog(@"Location: %f", location.coordinate.latitude);
+    } else {
+        NSDate *locationDate = location.timestamp;
+        NSTimeInterval interval = [locationDate timeIntervalSinceDate:dateOfLastLocation];
+        if (abs(interval) > (5 * 60)) {
+            NSLog(@"Location: %f", location.coordinate.latitude);
+        }
+    }
+    NSLog(@"Location2: %f", location.coordinate.latitude);
+}
+ */
 
 @end
