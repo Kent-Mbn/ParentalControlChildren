@@ -8,14 +8,22 @@
 
 #import "AppDelegate.h"
 
+#define kNotificationEnableTrackingLocations @"trackingLocation"
+#define kNotificationReloadTrackingLocations @"reloadTrackingLocation"
+
 @interface AppDelegate ()
 
 @end
 
 @implementation AppDelegate
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationEnableTrackingLocations object:nil];
+}
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+- (BOOL) application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
     /* Register push notification */
     if ([[[UIDevice currentDevice] systemVersion] floatValue] > 8.0) {
         [[UIApplication sharedApplication] registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge) categories:nil]];
@@ -24,7 +32,70 @@
         [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIUserNotificationTypeSound | UIUserNotificationTypeAlert | UIUserNotificationTypeBadge)];
     }
     
-    //[self initLocationManager];
+    //register notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(registerBackgroundMode) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    //set up LocationShareModel
+    self.shareModel = [LocationShareModel sharedModel];
+    self.shareModel.afterResume = NO;
+    
+    UIAlertView * alert;
+    //We have to make sure that the Background App Refresh is enable for the Location updates to work in the background.
+    if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied){
+        
+        alert = [[UIAlertView alloc]initWithTitle:@""
+                                          message:@"The app doesn't work without the Background App Refresh enabled. To turn it on, go to Settings > General > Background App Refresh"
+                                         delegate:nil
+                                cancelButtonTitle:@"Ok"
+                                otherButtonTitles:nil, nil];
+        [alert show];
+        
+    }else if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusRestricted){
+        
+        alert = [[UIAlertView alloc]initWithTitle:@""
+                                          message:@"The functions of this app are limited because the Background App Refresh is disable."
+                                         delegate:nil
+                                cancelButtonTitle:@"Ok"
+                                otherButtonTitles:nil, nil];
+        [alert show];
+        
+    } else{
+        
+        // When there is a significant changes of the location,
+        // The key UIApplicationLaunchOptionsLocationKey will be returned from didFinishLaunchingWithOptions
+        // When the app is receiving the key, it must reinitiate the locationManager and get
+        // the latest location updates
+        
+        // This UIApplicationLaunchOptionsLocationKey key enables the location update even when
+        // the app has been killed/terminated (Not in th background) by iOS or the user.
+        
+        if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
+            NSLog(@"UIApplicationLaunchOptionsLocationKey");
+            
+            // This "afterResume" flag is just to show that he receiving location updates
+            // are actually from the key "UIApplicationLaunchOptionsLocationKey"
+            self.shareModel.afterResume = YES;
+            
+            self.shareModel.anotherLocationManager = [[CLLocationManager alloc]init];
+            self.shareModel.anotherLocationManager.delegate = self;
+            self.shareModel.anotherLocationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+            self.shareModel.anotherLocationManager.activityType = CLActivityTypeOtherNavigation;
+            
+            if(IS_OS_8_OR_LATER) {
+                [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
+            }
+            
+            [self.shareModel.anotherLocationManager startMonitoringSignificantLocationChanges];
+        }else
+        {
+            
+        }
+    }
+    
     return YES;
 }
 
@@ -34,8 +105,12 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [self.shareModel.anotherLocationManager stopMonitoringSignificantLocationChanges];
+    
+    if(IS_OS_8_OR_LATER) {
+        [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
+    }
+    [self.shareModel.anotherLocationManager startMonitoringSignificantLocationChanges];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -43,7 +118,24 @@
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
-    // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationReloadTrackingLocations object:nil];
+    
+    
+    //Remove the "afterResume" Flag after the app is active again.
+    self.shareModel.afterResume = NO;
+    
+    if(self.shareModel.anotherLocationManager)
+        [self.shareModel.anotherLocationManager stopMonitoringSignificantLocationChanges];
+    
+    self.shareModel.anotherLocationManager = [[CLLocationManager alloc]init];
+    self.shareModel.anotherLocationManager.delegate = self;
+    self.shareModel.anotherLocationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    self.shareModel.anotherLocationManager.activityType = CLActivityTypeOtherNavigation;
+    
+    if(IS_OS_8_OR_LATER) {
+        [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
+    }
+    [self.shareModel.anotherLocationManager startMonitoringSignificantLocationChanges];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
@@ -185,6 +277,65 @@
         }
     }
 }
+
+#pragma mark - BACKGROUND TASK
+- (void) registerBackgroundMode
+{
+    if (self.backgroundTask != UIBackgroundTaskInvalid)
+    {
+        [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTask];
+        self.backgroundTask = UIBackgroundTaskInvalid;
+    }
+    if (self.updateTimer)
+    {
+        [self.updateTimer invalidate];
+        self.updateTimer = nil;
+    }
+    
+    self.updateTimer = [NSTimer scheduledTimerWithTimeInterval:5
+                                                            target:self
+                                                          selector:@selector(updateTimer:)
+                                                          userInfo:nil
+                                                           repeats:YES];
+        
+    self.backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:^{
+            NSLog(@"Background handler called. Not running background tasks anymore.");
+            [[UIApplication sharedApplication] endBackgroundTask:self.backgroundTask];
+            self.backgroundTask = UIBackgroundTaskInvalid;
+        }];
+    
+}
+
+- (void) updateTimer:(NSTimer *)timer
+{
+    
+    [self.shareModel.anotherLocationManager stopMonitoringSignificantLocationChanges];
+    if(IS_OS_8_OR_LATER) {
+            [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
+    }
+    [self.shareModel.anotherLocationManager startMonitoringSignificantLocationChanges];
+    [self.shareModel.anotherLocationManager startUpdatingLocation];
+    
+    
+}
+
+#pragma mark - LOCATION DELEGATE
+-(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    [manager stopUpdatingLocation];
+    CLLocation *location        = [locations lastObject];
+    self.myLastCLLocation   = location;
+    CLLocationCoordinate2D theLocation = self.myLastCLLocation.coordinate;
+    CLLocationAccuracy theAccuracy = self.myLastCLLocation.horizontalAccuracy;
+    self.myLocation = theLocation;
+    self.myLocationAccuracy = theAccuracy;
+    
+    NSLog(@"Save location to DB");
+    //[self addLocationToCoreData:self.shareModel.afterResume];
+    
+}
+
+
 
 /*
 #pragma mark - TRACKING LOCATION

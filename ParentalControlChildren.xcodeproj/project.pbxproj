@@ -11,6 +11,7 @@
 		D23AB6B31AFE33C3009FAD33 /* AddPhoneNumberVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B21AFE33C3009FAD33 /* AddPhoneNumberVC.m */; };
 		D23AB6B61AFE552B009FAD33 /* PersonContactObj.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B51AFE552B009FAD33 /* PersonContactObj.m */; };
 		D23AB6B91AFE5FF3009FAD33 /* AddPhoneNumberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B81AFE5FF3009FAD33 /* AddPhoneNumberCell.m */; };
+		D2DCAD391B05045A006DD835 /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = D2DCAD381B05045A006DD835 /* LocationShareModel.m */; };
 		D2E8B7AF1AFE13A200904B32 /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7AE1AFE13A200904B32 /* SettingsVC.m */; };
 		D2E8B7B21AFE13D700904B32 /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7B11AFE13D700904B32 /* SettingsCell.m */; };
 		D2E8B7B61AFE1F0200904B32 /* PhoneNumberListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7B51AFE1F0200904B32 /* PhoneNumberListVC.m */; };
@@ -97,6 +98,8 @@
 		D23AB6B51AFE552B009FAD33 /* PersonContactObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonContactObj.m; sourceTree = "<group>"; };
 		D23AB6B71AFE5FF3009FAD33 /* AddPhoneNumberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPhoneNumberCell.h; sourceTree = "<group>"; };
 		D23AB6B81AFE5FF3009FAD33 /* AddPhoneNumberCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPhoneNumberCell.m; sourceTree = "<group>"; };
+		D2DCAD371B05045A006DD835 /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
+		D2DCAD381B05045A006DD835 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
 		D2E8B7AD1AFE13A200904B32 /* SettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		D2E8B7AE1AFE13A200904B32 /* SettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		D2E8B7B01AFE13D700904B32 /* SettingsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
@@ -355,6 +358,8 @@
 		D9DDEE531AFCA15F00848B57 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D2DCAD371B05045A006DD835 /* LocationShareModel.h */,
+				D2DCAD381B05045A006DD835 /* LocationShareModel.m */,
 				D9C5A8001B02FB3D00E6C72C /* UserDefault.h */,
 				D9C5A8011B02FB3D00E6C72C /* UserDefault.m */,
 				D9503FA11B01DC2B00252DD1 /* APIService.h */,
@@ -483,7 +488,7 @@
 				TargetAttributes = {
 					D903E55A1AF9B9BE00760189 = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 78USBB6475;
+						DevelopmentTeam = 2LZQ7D2R77;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -634,6 +639,7 @@
 				D9DDEE9D1AFCA53500848B57 /* HomeVC.m in Sources */,
 				D9C5A8021B02FB3D00E6C72C /* UserDefault.m in Sources */,
 				D9DDEE971AFCA30D00848B57 /* Common.m in Sources */,
+				D2DCAD391B05045A006DD835 /* LocationShareModel.m in Sources */,
 				D903E5611AF9B9BE00760189 /* main.m in Sources */,
 				D23AB6B91AFE5FF3009FAD33 /* AddPhoneNumberCell.m in Sources */,
 			);
@@ -759,12 +765,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Long Dang (KGRB3TXL8E)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mike Panas (E6LZT4XBPK)";
 				INFOPLIST_FILE = ParentalControlChildren/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "Childrent App";
-				PROVISIONING_PROFILE = "caf1987e-151d-4604-bee9-4f65ed200789";
+				PROVISIONING_PROFILE = "3a0b3c60-9b74-4256-8564-f7d88ceb3c6a";
 			};
 			name = Debug;
 		};
@@ -774,12 +780,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Long Dang (KGRB3TXL8E)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Mike Panas (E6LZT4XBPK)";
 				INFOPLIST_FILE = ParentalControlChildren/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "Childrent App";
-				PROVISIONING_PROFILE = "caf1987e-151d-4604-bee9-4f65ed200789";
+				PROVISIONING_PROFILE = "3a0b3c60-9b74-4256-8564-f7d88ceb3c6a";
 			};
 			name = Release;
 		};
