@@ -17,6 +17,8 @@
 
 #define APP_DELEGATE (AppDelegate *)[UIApplication sharedApplication].delegate
 
+#define CONTENT_MSS_NOTIFY_DEFAULT @"Your childrent is going out the safe area!"
+
 #define APP_NAME @"Child App"
 #define NAME_LOCAL_FILE_SAVE_LOCATION @"localTrackingLocation.plist"
 
@@ -31,10 +33,12 @@
 #define MSS_CONFIRM_FAILED @"Confirm failed!"
 #define MSS_CONFIRM_SUCCESS @"Confirm successfully!"
 
-
 #pragma mark - ADDRESS BOOK
 #define MSS_DENIED @"You must give the app permission to add the contact first."
 
 #pragma mark - TRACKING LOCATION
 #define MSS_UIBackgroundRefreshStatusDenied @"The app doesn't work without the Background App Refresh enabled. To turn it on, go to Settings > General > Background App Refresh"
 #define MSS_UIBackgroundRefreshStatusRestricted @"The functions of this app are limited because the Background App Refresh is disable."
+
+#pragma mark - EDIT MESSAGE
+#define MSS_CONTENT_IS_NULL @"Content messge is not blank!"

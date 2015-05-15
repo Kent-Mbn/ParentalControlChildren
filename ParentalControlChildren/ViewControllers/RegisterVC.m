@@ -56,6 +56,7 @@
             [[UserDefault user] setChild_id:arrRespone[0][@"device_id"]];
             [[UserDefault user] setEmail:_tfEmail.text];
             [[UserDefault user] setFull_name:_tfFullName.text];
+            [[UserDefault user] setContent_mss:CONTENT_MSS_NOTIFY_DEFAULT];
             [[UserDefault user] setToken_device:[Common getDeviceToken]];
             
             [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];

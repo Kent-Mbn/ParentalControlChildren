@@ -554,12 +554,16 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <outlet property="delegate" destination="h46-bX-pWz" id="OOE-zk-O4d"/>
+                                </connections>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="HBb-FB-jUg"/>
                     <connections>
+                        <outlet property="textView" destination="xDx-LV-tVn" id="wfA-ks-QQM"/>
                         <outlet property="viewTopBar" destination="R2D-Dr-zAK" id="9jR-eu-gMX"/>
                     </connections>
                 </viewController>

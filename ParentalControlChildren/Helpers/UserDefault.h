@@ -14,6 +14,7 @@
 @property(nonatomic,strong) NSString *token_device;
 @property(nonatomic,strong) NSString *email;
 @property(nonatomic,strong) NSString *full_name;
+@property(nonatomic,strong) NSString *content_mss;
 
 + (UserDefault *) user;
 - (void) update;

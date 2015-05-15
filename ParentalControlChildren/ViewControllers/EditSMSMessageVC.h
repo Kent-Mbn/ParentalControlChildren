@@ -8,11 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "Define.h"
+#import "UserDefault.h"
+#import "Common.h"
 
 @interface EditSMSMessageVC : UIViewController
 - (IBAction)actionBack:(id)sender;
 - (IBAction)actionDone:(id)sender;
 @property (weak, nonatomic) IBOutlet UIView *viewTopBar;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
 
 
 @end

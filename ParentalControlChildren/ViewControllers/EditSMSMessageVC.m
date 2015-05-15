@@ -18,6 +18,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _viewTopBar.backgroundColor = masterColor;
+    NSString *strInitContent = [UserDefault user].content_mss;
+    if (strInitContent.length > 0) {
+        _textView.text = [UserDefault user].content_mss;
+    } else {
+        _textView.text = CONTENT_MSS_NOTIFY_DEFAULT;
+    }
+    [_textView becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -40,5 +47,11 @@
 }
 
 - (IBAction)actionDone:(id)sender {
+    if (_textView.text.length > 0) {
+        [[UserDefault user] setContent_mss:_textView.text];
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [Common showAlertView:APP_NAME message:MSS_CONTENT_IS_NULL delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+    }
 }
 @end

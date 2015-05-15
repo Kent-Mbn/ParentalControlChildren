@@ -15,7 +15,7 @@ static UserDefault *globalObject;
 
 - (id)initWithId:(NSInteger)childId
 {
-    self.child_id = [NSString stringWithFormat:@"%d", childId];
+    self.child_id = [NSString stringWithFormat:@"%ld", (long)childId];
     return self;
 }
 
@@ -27,6 +27,7 @@ static UserDefault *globalObject;
         self.email = [aDecoder decodeObjectForKey:@"email"];
         self.token_device = [aDecoder decodeObjectForKey:@"token_device"];
         self.full_name = [aDecoder decodeObjectForKey:@"full_name"];
+        self.content_mss = [aDecoder decodeObjectForKey:@"content_mss"];
     }
     
     return self;
@@ -38,6 +39,7 @@ static UserDefault *globalObject;
     [aCoder encodeObject:self.email forKey:@"email"];
     [aCoder encodeObject:self.token_device forKey:@"token_device"];
     [aCoder encodeObject:self.full_name forKey:@"full_name"];
+    [aCoder encodeObject:self.content_mss forKey:@"content_mss"];
 }
 
 - (void) updateUserDefault
@@ -53,6 +55,7 @@ static UserDefault *globalObject;
     user.email = nil;
     user.token_device = nil;
     user.full_name = nil;
+    user.content_mss = nil;
     [user update];
 }
 
