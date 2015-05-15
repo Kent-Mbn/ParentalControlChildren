@@ -25,6 +25,7 @@
 + (CLLocationManager *)sharedLocationManager;
 
 - (void)startLocationTracking;
+- (void) restartLocationUpdates;
 - (void)stopLocationTracking;
 - (void)updateLocationToServer;
 

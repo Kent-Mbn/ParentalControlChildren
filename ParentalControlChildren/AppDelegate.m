@@ -53,6 +53,7 @@
                                        selector:@selector(updateLocation)
                                        userInfo:nil
                                         repeats:YES];
+        self.locationRestartUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:time target:self selector:@selector(restartLocation) userInfo:nil repeats:YES];
         
         /* INIT for filled app */
         if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
@@ -175,6 +176,10 @@
 #pragma mark - LOCATION
 -(void)updateLocation {
     [self.locationTracker updateLocationToServer];
+}
+
+- (void) restartLocation {
+    [self.locationTracker restartLocationUpdates];
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations

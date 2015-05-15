@@ -27,6 +27,7 @@
 //Location
 @property LocationTracker * locationTracker;
 @property (nonatomic) NSTimer* locationUpdateTimer;
+@property (nonatomic) NSTimer* locationRestartUpdateTimer;
 @property (strong,nonatomic) LocationShareModel * shareModel;
 
 //Core data

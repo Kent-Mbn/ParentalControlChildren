@@ -121,6 +121,7 @@
     NSLog(@"locationManager didUpdateLocations");
     
     //Only get last location
+    NSLog(@"Array locations: %@", locations);
     CLLocation * newLocation = [locations lastObject];
     self.myLastLocation = newLocation.coordinate;
     self.myLastLocationAccuracy= newLocation.horizontalAccuracy;
@@ -167,10 +168,12 @@
     [self.shareModel.bgTask beginNewBackgroundTask];
     
     //Restart the locationMaanger after 1 minute
-    self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:60 target:self
+    /*
+    self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:timeTrackingLocation target:self
                                                            selector:@selector(restartLocationUpdates)
                                                            userInfo:nil
-                                                            repeats:NO];
+                                                            repeats:YES];
+     */
     
     //Will only stop the locationManager after 10 seconds, so that we can get some accurate locations
     //The location manager will only operate for 10 seconds to save battery
