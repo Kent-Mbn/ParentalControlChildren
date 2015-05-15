@@ -11,7 +11,6 @@
 		D23AB6B31AFE33C3009FAD33 /* AddPhoneNumberVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B21AFE33C3009FAD33 /* AddPhoneNumberVC.m */; };
 		D23AB6B61AFE552B009FAD33 /* PersonContactObj.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B51AFE552B009FAD33 /* PersonContactObj.m */; };
 		D23AB6B91AFE5FF3009FAD33 /* AddPhoneNumberCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D23AB6B81AFE5FF3009FAD33 /* AddPhoneNumberCell.m */; };
-		D2DCAD391B05045A006DD835 /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = D2DCAD381B05045A006DD835 /* LocationShareModel.m */; };
 		D2E8B7AF1AFE13A200904B32 /* SettingsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7AE1AFE13A200904B32 /* SettingsVC.m */; };
 		D2E8B7B21AFE13D700904B32 /* SettingsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7B11AFE13D700904B32 /* SettingsCell.m */; };
 		D2E8B7B61AFE1F0200904B32 /* PhoneNumberListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D2E8B7B51AFE1F0200904B32 /* PhoneNumberListVC.m */; };
@@ -32,6 +31,10 @@
 		D98F6DE21B00ACCD00F1D855 /* ic_delete.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DE01B00ACCD00F1D855 /* ic_delete.png */; };
 		D98F6DE31B00ACCD00F1D855 /* ic_delete@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DE11B00ACCD00F1D855 /* ic_delete@2x.png */; };
 		D9C5A8021B02FB3D00E6C72C /* UserDefault.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C5A8011B02FB3D00E6C72C /* UserDefault.m */; };
+		D9CDF2F21B059C4700C3C31C /* LocationShareModel.m in Sources */ = {isa = PBXBuildFile; fileRef = D9CDF2F11B059C4700C3C31C /* LocationShareModel.m */; };
+		D9CDF2F51B059C8F00C3C31C /* BackgroundTaskManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9CDF2F41B059C8F00C3C31C /* BackgroundTaskManager.m */; };
+		D9CDF2F71B059D6400C3C31C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9CDF2F61B059D6400C3C31C /* UIKit.framework */; };
+		D9CDF2FA1B059E0000C3C31C /* LocationTracker.m in Sources */ = {isa = PBXBuildFile; fileRef = D9CDF2F91B059E0000C3C31C /* LocationTracker.m */; };
 		D9DDEE751AFCA24000848B57 /* avatar-female-contact.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE561AFCA24000848B57 /* avatar-female-contact.png */; };
 		D9DDEE761AFCA24000848B57 /* avatar-Male-contact.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE571AFCA24000848B57 /* avatar-Male-contact.png */; };
 		D9DDEE771AFCA24000848B57 /* box-check.png in Resources */ = {isa = PBXBuildFile; fileRef = D9DDEE581AFCA24000848B57 /* box-check.png */; };
@@ -98,8 +101,6 @@
 		D23AB6B51AFE552B009FAD33 /* PersonContactObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PersonContactObj.m; sourceTree = "<group>"; };
 		D23AB6B71AFE5FF3009FAD33 /* AddPhoneNumberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddPhoneNumberCell.h; sourceTree = "<group>"; };
 		D23AB6B81AFE5FF3009FAD33 /* AddPhoneNumberCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddPhoneNumberCell.m; sourceTree = "<group>"; };
-		D2DCAD371B05045A006DD835 /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
-		D2DCAD381B05045A006DD835 /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
 		D2E8B7AD1AFE13A200904B32 /* SettingsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsVC.h; sourceTree = "<group>"; };
 		D2E8B7AE1AFE13A200904B32 /* SettingsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsVC.m; sourceTree = "<group>"; };
 		D2E8B7B01AFE13D700904B32 /* SettingsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsCell.h; sourceTree = "<group>"; };
@@ -133,6 +134,13 @@
 		D98F6DE11B00ACCD00F1D855 /* ic_delete@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_delete@2x.png"; sourceTree = "<group>"; };
 		D9C5A8001B02FB3D00E6C72C /* UserDefault.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserDefault.h; sourceTree = "<group>"; };
 		D9C5A8011B02FB3D00E6C72C /* UserDefault.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserDefault.m; sourceTree = "<group>"; };
+		D9CDF2F01B059C4700C3C31C /* LocationShareModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationShareModel.h; sourceTree = "<group>"; };
+		D9CDF2F11B059C4700C3C31C /* LocationShareModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationShareModel.m; sourceTree = "<group>"; };
+		D9CDF2F31B059C8F00C3C31C /* BackgroundTaskManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackgroundTaskManager.h; sourceTree = "<group>"; };
+		D9CDF2F41B059C8F00C3C31C /* BackgroundTaskManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BackgroundTaskManager.m; sourceTree = "<group>"; };
+		D9CDF2F61B059D6400C3C31C /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		D9CDF2F81B059E0000C3C31C /* LocationTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationTracker.h; sourceTree = "<group>"; };
+		D9CDF2F91B059E0000C3C31C /* LocationTracker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationTracker.m; sourceTree = "<group>"; };
 		D9DDEE561AFCA24000848B57 /* avatar-female-contact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "avatar-female-contact.png"; sourceTree = "<group>"; };
 		D9DDEE571AFCA24000848B57 /* avatar-Male-contact.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "avatar-Male-contact.png"; sourceTree = "<group>"; };
 		D9DDEE581AFCA24000848B57 /* box-check.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "box-check.png"; sourceTree = "<group>"; };
@@ -188,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9CDF2F71B059D6400C3C31C /* UIKit.framework in Frameworks */,
 				D9DDEEA11AFCAD4100848B57 /* MapKit.framework in Frameworks */,
 				42C7EEF58E1E7379BE9F134A /* libPods.a in Frameworks */,
 			);
@@ -215,6 +224,7 @@
 		C85C276E02C5A0CED6F28DD0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D9CDF2F61B059D6400C3C31C /* UIKit.framework */,
 				D9DDEEA01AFCAD4100848B57 /* MapKit.framework */,
 				820C6FAE71881C9CC6E487FC /* libPods.a */,
 			);
@@ -355,11 +365,23 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		D9CDF2EF1B059BAC00C3C31C /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				D9CDF2F81B059E0000C3C31C /* LocationTracker.h */,
+				D9CDF2F91B059E0000C3C31C /* LocationTracker.m */,
+				D9CDF2F01B059C4700C3C31C /* LocationShareModel.h */,
+				D9CDF2F11B059C4700C3C31C /* LocationShareModel.m */,
+				D9CDF2F31B059C8F00C3C31C /* BackgroundTaskManager.h */,
+				D9CDF2F41B059C8F00C3C31C /* BackgroundTaskManager.m */,
+			);
+			name = Location;
+			sourceTree = "<group>";
+		};
 		D9DDEE531AFCA15F00848B57 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				D2DCAD371B05045A006DD835 /* LocationShareModel.h */,
-				D2DCAD381B05045A006DD835 /* LocationShareModel.m */,
+				D9CDF2EF1B059BAC00C3C31C /* Location */,
 				D9C5A8001B02FB3D00E6C72C /* UserDefault.h */,
 				D9C5A8011B02FB3D00E6C72C /* UserDefault.m */,
 				D9503FA11B01DC2B00252DD1 /* APIService.h */,
@@ -488,7 +510,7 @@
 				TargetAttributes = {
 					D903E55A1AF9B9BE00760189 = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 2LZQ7D2R77;
+						DevelopmentTeam = 78USBB6475;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -639,8 +661,10 @@
 				D9DDEE9D1AFCA53500848B57 /* HomeVC.m in Sources */,
 				D9C5A8021B02FB3D00E6C72C /* UserDefault.m in Sources */,
 				D9DDEE971AFCA30D00848B57 /* Common.m in Sources */,
-				D2DCAD391B05045A006DD835 /* LocationShareModel.m in Sources */,
+				D9CDF2F21B059C4700C3C31C /* LocationShareModel.m in Sources */,
 				D903E5611AF9B9BE00760189 /* main.m in Sources */,
+				D9CDF2FA1B059E0000C3C31C /* LocationTracker.m in Sources */,
+				D9CDF2F51B059C8F00C3C31C /* BackgroundTaskManager.m in Sources */,
 				D23AB6B91AFE5FF3009FAD33 /* AddPhoneNumberCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -765,12 +789,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mike Panas (E6LZT4XBPK)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Long Dang (KGRB3TXL8E)";
 				INFOPLIST_FILE = ParentalControlChildren/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "Childrent App";
-				PROVISIONING_PROFILE = "3a0b3c60-9b74-4256-8564-f7d88ceb3c6a";
+				PROVISIONING_PROFILE = "caf1987e-151d-4604-bee9-4f65ed200789";
 			};
 			name = Debug;
 		};
@@ -780,12 +804,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Mike Panas (E6LZT4XBPK)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Long Dang (KGRB3TXL8E)";
 				INFOPLIST_FILE = ParentalControlChildren/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "Childrent App";
-				PROVISIONING_PROFILE = "3a0b3c60-9b74-4256-8564-f7d88ceb3c6a";
+				PROVISIONING_PROFILE = "caf1987e-151d-4604-bee9-4f65ed200789";
 			};
 			name = Release;
 		};

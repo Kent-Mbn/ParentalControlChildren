@@ -2,22 +2,24 @@
 //  LocationShareModel.h
 //  Location
 //
-//  Created by Harry Tran on 4/17/15.
-//  Copyright (c) 2015 HarryTran. All rights reserved.
+//  Created by Rick
+//  Copyright (c) 2014 Location. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+#import "BackgroundTaskManager.h"
 #import <CoreLocation/CoreLocation.h>
-
-#define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
 
 @interface LocationShareModel : NSObject
 
+/* Property for tracking location in background mode */
+@property (nonatomic) NSTimer *timer;
+@property (nonatomic) NSTimer * delay10Seconds;
+@property (nonatomic) BackgroundTaskManager * bgTask;
+@property (nonatomic) NSMutableArray *myLocationArray;
+
+/* Property for tracking location in killed app mode */
 @property (nonatomic) CLLocationManager * anotherLocationManager;
-
-@property (nonatomic) NSMutableDictionary *myLocationDictInPlist;
-@property (nonatomic) NSMutableArray *myLocationArrayInPlist;
-
 @property (nonatomic) BOOL afterResume;
 
 +(id)sharedModel;

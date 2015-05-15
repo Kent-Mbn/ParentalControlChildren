@@ -32,5 +32,10 @@
 + (void) showLoadingViewGlobal:(NSString *) titleaLoading;
 + (void) hideLoadingViewGlobal;
 
++ (NSString *) pathOfFileLocalTrackingLocation;
++ (void) writeArrayToFileLocalTrackingLocation:(NSMutableArray *) arrToWrite;
++ (NSMutableArray *) readFileLocalTrackingLocation;
++ (void) writeObjToFileTrackingLocation:(NSDictionary *) dicObj;
+
 
 @end

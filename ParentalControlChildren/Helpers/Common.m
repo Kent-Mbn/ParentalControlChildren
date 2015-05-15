@@ -114,5 +114,37 @@
     return NO;
 }
 
++ (NSString *) pathOfFileLocalTrackingLocation {
+    NSArray *filePaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [filePaths objectAtIndex:0];
+    NSString *path = [documentsDirectory stringByAppendingPathComponent:NAME_LOCAL_FILE_SAVE_LOCATION];
+    return path;
+}
+
++ (void) writeArrayToFileLocalTrackingLocation:(NSMutableArray *) arrToWrite {
+    [arrToWrite writeToFile:[self pathOfFileLocalTrackingLocation] atomically:YES];
+}
+
++ (NSMutableArray *) readFileLocalTrackingLocation {
+    NSMutableArray *arrReturn = nil;
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[self pathOfFileLocalTrackingLocation]]) {
+        arrReturn = [[NSMutableArray arrayWithContentsOfFile:[self pathOfFileLocalTrackingLocation]] mutableCopy];
+    }
+    return arrReturn;
+}
+
++ (void) writeObjToFileTrackingLocation:(NSDictionary *) dicObj {
+    //Get data
+    NSMutableArray *arrInit = [self readFileLocalTrackingLocation];
+    if (arrInit != nil) {
+        [arrInit addObject:dicObj];
+    } else {
+        arrInit = [[NSMutableArray alloc] init];
+        [arrInit addObject:dicObj];
+    }
+    
+    //Write to file
+    [self writeArrayToFileLocalTrackingLocation:arrInit];
+}
 
 @end

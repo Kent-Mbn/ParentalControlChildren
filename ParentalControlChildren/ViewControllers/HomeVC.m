@@ -14,13 +14,22 @@
     typeMap = NSTypeMapStandard;
     [self changeStatusOfButtonMapType];
     _viewBottomBar.backgroundColor = masterColor;
-    [self initGetCurrentLocation];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
+    // Load all location and show to map
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    NSLog(@"Tracking location: %@", arrDataLocation);
+    if ([arrDataLocation count] > 0) {
+        for (int i = 0; i < [arrDataLocation count]; i++) {
+            NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
+            CLLocationCoordinate2D pointLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", objDic[@"lat"], objDic[@"long"]]];
+            [self addPinViewToMap:pointLocation];
+        }
+    }
     
+    //[self zoomToFitMapAnnotations];
 }
-
 
 #pragma mark - ACTION
 - (IBAction)actionEmergency:(id)sender {
@@ -99,6 +108,28 @@
     }];
 }
 
+-(void) addPinViewToMap:(CLLocationCoordinate2D) location {
+    MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
+    point.coordinate = location;
+    [_mapView addAnnotation:point];
+}
+
+-(void) zoomToFitMapAnnotations {
+    int count_point = [_mapView.annotations count];
+    if (count_point == 0) {
+        return;
+    }
+    
+    MKMapPoint points[count_point];
+    for (int i = 0; i < count_point; i++) {
+        MKAnnotationView *oneAnno = [_mapView.annotations objectAtIndex:i];
+        points[i] = MKMapPointForCoordinate([oneAnno.annotation coordinate]);
+    }
+    
+    MKPolygon *poly = [MKPolygon polygonWithPoints:points count:count_point];
+    [_mapView setVisibleMapRect:[poly boundingMapRect] edgePadding:UIEdgeInsetsMake(100, 100, 100, 100) animated:YES];
+}
+
 - (void) callWSUpdateHistoryLocation:(CLLocationCoordinate2D)curLocation andAddress:(NSString *)strAddr {
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
@@ -119,39 +150,6 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
     }];
-}
-
-#pragma mark - LOCATION
-- (void) initGetCurrentLocation {
-    if (nil == locationManager)
-        locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate = self;
-    locationManager.distanceFilter = kCLDistanceFilterNone; // whenever we move
-    locationManager.desiredAccuracy = kCLLocationAccuracyBest; // 100 m
-    if(IS_OS_8_OR_LATER) {
-        [locationManager requestAlwaysAuthorization];
-    }
-    [locationManager startUpdatingLocation];
-}
-
-- (void) locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
-    
-}
-
-- (void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
-    CLLocation* location = [locations lastObject];
-    if (dateOfLastLocation == nil) {
-        dateOfLastLocation = location.timestamp;
-        NSLog(@"Location: %f", location.coordinate.latitude);
-        [self addAndFocusPinViewToMapAndUpdateToServer:location];
-    } else {
-        NSDate *locationDate = location.timestamp;
-        NSTimeInterval interval = [locationDate timeIntervalSinceDate:dateOfLastLocation];
-        if (abs(interval) > (5 * 60)) {
-            NSLog(@"Location: %f", location.coordinate.latitude);
-            [self addAndFocusPinViewToMapAndUpdateToServer:location];
-        }
-    }
 }
 
 #pragma mark - MAP DELEGATE
