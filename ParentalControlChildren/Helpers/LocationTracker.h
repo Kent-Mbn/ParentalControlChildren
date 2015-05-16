@@ -22,10 +22,18 @@
 @property (nonatomic) CLLocationCoordinate2D myLocation;
 @property (nonatomic) CLLocationAccuracy myLocationAccuracy;
 
+//@property times
+@property (nonatomic) NSTimeInterval timeIntervalGetLocationTracking;
+@property (nonatomic) NSTimeInterval timeDelayTracking;
+@property (nonatomic) NSTimeInterval timeProcessTracking;
+
+//@property distance filter
+@property (nonatomic) NSInteger distanceFilterTracking;
+
 + (CLLocationManager *)sharedLocationManager;
 
 - (void)startLocationTracking;
-- (void) restartLocationUpdates;
+- (void)restartLocationUpdates;
 - (void)stopLocationTracking;
 - (void)updateLocationToServer;
 

@@ -13,8 +13,11 @@
 @interface LocationShareModel : NSObject
 
 /* Property for tracking location in background mode */
-@property (nonatomic) NSTimer *timer;
-@property (nonatomic) NSTimer * delay10Seconds;
+@property (nonatomic) NSTimer *timerIntervalGetLocationTracking;
+@property (nonatomic) NSTimer *timerIntervalUpdateLocationTracking;
+@property (nonatomic) NSTimer *timerDelayTracking;
+@property (nonatomic) NSTimer *timerProcessTracking;
+
 @property (nonatomic) BackgroundTaskManager * bgTask;
 @property (nonatomic) NSMutableArray *myLocationArray;
 

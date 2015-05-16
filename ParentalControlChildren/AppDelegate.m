@@ -20,6 +20,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationEnableTrackingLocations object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationGetNewLocation object:nil];
 }
 
 - (BOOL) application:(UIApplication *)application willFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -36,6 +37,10 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    self.shareModel = [LocationShareModel sharedModel];
+    self.shareModel.afterResume = NO;
+    
     //We have to make sure that the Background App Refresh is enable for the Location updates to work in the background.
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied){
         [Common showAlertView:APP_NAME message:MSS_UIBackgroundRefreshStatusDenied delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
@@ -45,7 +50,16 @@
         
         /* INIT for background mode */
         self.locationTracker = [[LocationTracker alloc]init];
+        self.locationTracker.timeIntervalGetLocationTracking = timeTrackingLocation;
+        self.locationTracker.timeProcessTracking = 60;
+        self.locationTracker.timeDelayTracking = 10;
         [self.locationTracker startLocationTracking];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(returnNewLocation:)
+                                                     name:kNotificationGetNewLocation
+                                                   object:nil];
+        
+        /*
         NSTimeInterval time = timeTrackingLocation;
         self.locationUpdateTimer =
         [NSTimer scheduledTimerWithTimeInterval:time
@@ -54,6 +68,7 @@
                                        userInfo:nil
                                         repeats:YES];
         self.locationRestartUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:time target:self selector:@selector(restartLocation) userInfo:nil repeats:YES];
+         */
         
         /* INIT for filled app */
         if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
@@ -177,6 +192,7 @@
 }
 
 #pragma mark - LOCATION
+/*
 -(void)updateLocation {
     [self.locationTracker updateLocationToServer];
 }
@@ -184,16 +200,22 @@
 - (void) restartLocation {
     [self.locationTracker restartLocationUpdates];
 }
+ */
+
+- (void) returnNewLocation :(NSNotification *) noti {
+    NSDictionary *theData = [noti userInfo];
+    if (theData != nil) {
+        NSLog(@"+++ New location: %@", theData);
+        [Common writeObjToFileTrackingLocation:theData];
+    }
+}
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    [manager stopUpdatingLocation];
     CLLocation *location = [locations lastObject];
-    NSString *strLat = [NSString stringWithFormat:@"%f",location.coordinate.latitude];
-    NSString *strLong = [NSString stringWithFormat:@"%f",location.coordinate.longitude];
     
     //Write location to file
-    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[strLat,strLong,@"killed"] forKeys:@[@"lat",@"long",@"type"]];
+    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(location.coordinate.latitude),@(location.coordinate.longitude),@"killed"] forKeys:@[@"lat",@"long",@"type"]];
     [Common writeObjToFileTrackingLocation:dicObj];
 }
 

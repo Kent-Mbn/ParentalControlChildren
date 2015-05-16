@@ -9,6 +9,7 @@
 // Master color
 #define masterColor [UIColor colorWithRed:49/255.0f green:144/255.0f blue:181/255.0f alpha:1.0]
 #define IS_OS_8_OR_LATER ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8.0)
+#define kNotificationGetNewLocation @"kNotificationGetNewLocation"
 #define timeTrackingLocation 5
 #define timePauseTrackingLocation 5
 

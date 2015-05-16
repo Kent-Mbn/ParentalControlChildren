@@ -41,17 +41,17 @@
     UIBackgroundTaskIdentifier bgTaskId = UIBackgroundTaskInvalid;
     if([application respondsToSelector:@selector(beginBackgroundTaskWithExpirationHandler:)]){
         bgTaskId = [application beginBackgroundTaskWithExpirationHandler:^{
-            NSLog(@"background task %lu expired", (unsigned long)bgTaskId);
+            //NSLog(@"background task %lu expired", (unsigned long)bgTaskId);
         }];
         if ( self.masterTaskId == UIBackgroundTaskInvalid )
         {
             self.masterTaskId = bgTaskId;
-            NSLog(@"started master task %lu", (unsigned long)self.masterTaskId);
+            //NSLog(@"started master task %lu", (unsigned long)self.masterTaskId);
         }
         else
         {
             //add this id to our list
-            NSLog(@"started background task %lu", (unsigned long)bgTaskId);
+            //NSLog(@"started background task %lu", (unsigned long)bgTaskId);
             [self.bgTaskIdList addObject:@(bgTaskId)];
             [self endBackgroundTasks];
         }
@@ -79,23 +79,23 @@
         for ( NSUInteger i=(all?0:1); i<count; i++ )
         {
             UIBackgroundTaskIdentifier bgTaskId = [[self.bgTaskIdList objectAtIndex:0] integerValue];
-            NSLog(@"ending background task with id -%lu", (unsigned long)bgTaskId);
+            //NSLog(@"ending background task with id -%lu", (unsigned long)bgTaskId);
             [application endBackgroundTask:bgTaskId];
             [self.bgTaskIdList removeObjectAtIndex:0];
         }
         if ( self.bgTaskIdList.count > 0 )
         {
-            NSLog(@"kept background task id %@", [self.bgTaskIdList objectAtIndex:0]);
+            //NSLog(@"kept background task id %@", [self.bgTaskIdList objectAtIndex:0]);
         }
         if ( all )
         {
-            NSLog(@"no more background tasks running");
+            //NSLog(@"no more background tasks running");
             [application endBackgroundTask:self.masterTaskId];
             self.masterTaskId = UIBackgroundTaskInvalid;
         }
         else
         {
-            NSLog(@"kept master background task id %lu", (unsigned long)self.masterTaskId);
+            //NSLog(@"kept master background task id %lu", (unsigned long)self.masterTaskId);
         }
     }
 }

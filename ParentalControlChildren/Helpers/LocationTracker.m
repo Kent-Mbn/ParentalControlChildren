@@ -58,13 +58,6 @@
 
 - (void) restartLocationUpdates
 {
-    NSLog(@"restartLocationUpdates");
-    
-    if (self.shareModel.timer) {
-        [self.shareModel.timer invalidate];
-        self.shareModel.timer = nil;
-    }
-    
     CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
     locationManager.delegate = self;
     locationManager.desiredAccuracy = kCLLocationAccuracyBest;
@@ -99,6 +92,11 @@
               [locationManager requestAlwaysAuthorization];
             }
             [locationManager startUpdatingLocation];
+            
+            /* Begin time interval tracking loaction, config from user */
+            [self startTimerProcessTracking];
+            [self startTimerIntervalUpdateLocationTracking];
+            [self startTimerIntervalGetLocationTracking];
         }
 	}
 }
@@ -107,95 +105,36 @@
 - (void)stopLocationTracking {
     NSLog(@"stopLocationTracking");
     
-    if (self.shareModel.timer) {
-        [self.shareModel.timer invalidate];
-        self.shareModel.timer = nil;
-    }
-    
 	CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
 	[locationManager stopUpdatingLocation];
+    
+    [self stopTimerProcessTracking];
+    [self stopTimerIntervalUpdateLocationTracking];
+    [self stopTimerDelayTracking];
 }
 
 #pragma mark - CLLocationManagerDelegate Methods
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations{
-    NSLog(@"locationManager didUpdateLocations");
+    CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
+    [locationManager stopUpdatingLocation];
     
     //Only get last location
-    NSLog(@"Array locations: %@", locations);
+    NSLog(@"Update locations: %@", locations);
     CLLocation * newLocation = [locations lastObject];
     self.myLastLocation = newLocation.coordinate;
     self.myLastLocationAccuracy= newLocation.horizontalAccuracy;
     
-    /*
-    for(int i=0;i<locations.count;i++){
-        CLLocation * newLocation = [locations objectAtIndex:i];
-        CLLocationCoordinate2D theLocation = newLocation.coordinate;
-        CLLocationAccuracy theAccuracy = newLocation.horizontalAccuracy;
-        
-        NSTimeInterval locationAge = -[newLocation.timestamp timeIntervalSinceNow];
-        
-        if (locationAge > 30.0)
-        {
-            continue;
-        }
-        
-        //Select only valid location and also location with good accuracy
-        if(newLocation!=nil&&theAccuracy>0
-           &&theAccuracy<2000
-           &&(!(theLocation.latitude==0.0&&theLocation.longitude==0.0))){
-            
-            self.myLastLocation = theLocation;
-            self.myLastLocationAccuracy= theAccuracy;
-            
-            NSMutableDictionary * dict = [[NSMutableDictionary alloc]init];
-            [dict setObject:[NSNumber numberWithFloat:theLocation.latitude] forKey:@"latitude"];
-            [dict setObject:[NSNumber numberWithFloat:theLocation.longitude] forKey:@"longitude"];
-            [dict setObject:[NSNumber numberWithFloat:theAccuracy] forKey:@"theAccuracy"];
-            
-            //Add the vallid location with good accuracy into an array
-            //Every 1 minute, I will select the best location based on accuracy and send to server
-            [self.shareModel.myLocationArray addObject:dict];
-        }
-    }
-     */
-    
-    //If the timer still valid, return it (Will not run the code below)
-    if (self.shareModel.timer) {
-        return;
-    }
-    
     self.shareModel.bgTask = [BackgroundTaskManager sharedBackgroundTaskManager];
     [self.shareModel.bgTask beginNewBackgroundTask];
-    
-    //Restart the locationMaanger after 1 minute
-    /*
-    self.shareModel.timer = [NSTimer scheduledTimerWithTimeInterval:timeTrackingLocation target:self
-                                                           selector:@selector(restartLocationUpdates)
-                                                           userInfo:nil
-                                                            repeats:YES];
-     */
-    
-    //Will only stop the locationManager after 10 seconds, so that we can get some accurate locations
-    //The location manager will only operate for 10 seconds to save battery
-    if (self.shareModel.delay10Seconds) {
-        [self.shareModel.delay10Seconds invalidate];
-        self.shareModel.delay10Seconds = nil;
-    }
-    
-    self.shareModel.delay10Seconds = [NSTimer scheduledTimerWithTimeInterval:timePauseTrackingLocation target:self
-                                                    selector:@selector(stopLocationDelayBy10Seconds)
-                                                    userInfo:nil
-                                                     repeats:NO];
-
 }
 
 
 //Stop the locationManager
--(void)stopLocationDelayBy10Seconds{
+-(void)stopLocationDelayTracking{
     CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
     [locationManager stopUpdatingLocation];
-    NSLog(@"locationManager stop Updating after %d seconds", timePauseTrackingLocation);
+    NSLog(@"locationManager stop Updating after %f seconds", self.timeDelayTracking);
 }
 
 - (void)locationManager: (CLLocationManager *)manager didFailWithError: (NSError *)error
@@ -224,59 +163,110 @@
 
 //Send the location to Server
 - (void)updateLocationToServer {
-    
-    NSLog(@"updateLocationToServer");
-    
-    /*
-    // Find the best location from the array based on accuracy
-    NSMutableDictionary * myBestLocation = [[NSMutableDictionary alloc]init];
-    
-    for(int i=0;i<self.shareModel.myLocationArray.count;i++){
-        NSMutableDictionary * currentLocation = [self.shareModel.myLocationArray objectAtIndex:i];
-        
-        if(i==0)
-            myBestLocation = currentLocation;
-        else{
-            if([[currentLocation objectForKey:ACCURACY]floatValue]<=[[myBestLocation objectForKey:ACCURACY]floatValue]){
-                myBestLocation = currentLocation;
-            }
-        }
-    }
-    NSLog(@"My Best location:%@",myBestLocation);
-    
-    //If the array is 0, get the last location
-    //Sometimes due to network issue or unknown reason, you could not get the location during that  period, the best you can do is sending the last known location to the server
-    if(self.shareModel.myLocationArray.count==0)
-    {
-        NSLog(@"Unable to get location, use the last known location");
+    //Your code to send the self.myLocation and self.myLocationAccuracy to your server
 
-        self.myLocation=self.myLastLocation;
-        self.myLocationAccuracy=self.myLastLocationAccuracy;
-        
-    }else{
-        CLLocationCoordinate2D theBestLocation;
-        theBestLocation.latitude =[[myBestLocation objectForKey:LATITUDE]floatValue];
-        theBestLocation.longitude =[[myBestLocation objectForKey:LONGITUDE]floatValue];
-        self.myLocation=theBestLocation;
-        self.myLocationAccuracy =[[myBestLocation objectForKey:ACCURACY]floatValue];
-    }
-     */
-    
-    NSLog(@"Send to Server: Latitude(%f) Longitude(%f) Accuracy(%f)",self.myLastLocation.latitude, self.myLastLocation.longitude,self.myLastLocationAccuracy);
-    
-    //TODO: Your code to send the self.myLocation and self.myLocationAccuracy to your server
-    
-    //Write location to file
     NSLog(@"Log location long: %@", @(self.myLastLocation.longitude));
     NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(self.myLastLocation.latitude),@(self.myLastLocation.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
-    [Common writeObjToFileTrackingLocation:dicObj];
-    
-    //After sending the location to the server successful, remember to clear the current array with the following code. It is to make sure that you clear up old location in the array and add the new locations from locationManager
-    [self.shareModel.myLocationArray removeAllObjects];
-    self.shareModel.myLocationArray = nil;
-    self.shareModel.myLocationArray = [[NSMutableArray alloc]init];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationGetNewLocation object:self userInfo:dicObj];
 }
 
+#pragma mark - TIMER
+- (void) startTimerIntervalGetLocationTracking {
+    [self stopTimerIntervalGetLocationTracking];
+    NSLog(@"---startTimerIntervalGetLocationTracking");
+    self.shareModel.timerIntervalGetLocationTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeIntervalGetLocationTracking
+                                                                          target:self
+                                                                        selector:@selector(endTimerIntervalGetLocationTracking)
+                                                                        userInfo:nil
+                                                                         repeats:YES];
+}
+- (void) startTimerIntervalUpdateLocationTracking {
+    [self stopTimerIntervalUpdateLocationTracking];
+    NSLog(@"---startTimerIntervalUpdateLocationTracking");
+    self.shareModel.timerIntervalUpdateLocationTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeIntervalGetLocationTracking
+                                                                          target:self
+                                                                        selector:@selector(endTimerIntervalUpdateLocationTracking)
+                                                                        userInfo:nil
+                                                                         repeats:YES];
+}
+- (void) startTimerDelayTracking {
+    [self stopTimerDelayTracking];
+    NSLog(@"---startTimerDelayTracking");
+    self.shareModel.timerDelayTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeDelayTracking
+                                                                          target:self
+                                                                        selector:@selector(endTimerDelayTracking)
+                                                                        userInfo:nil
+                                                                         repeats:NO];
+}
+- (void) startTimerProcessTracking {
+    [self stopTimerProcessTracking];
+    NSLog(@"---startTimerProcessTracking");
+    self.shareModel.timerProcessTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeProcessTracking
+                                                                          target:self
+                                                                        selector:@selector(endTimerProcessTracking)
+                                                                        userInfo:nil
+                                                                         repeats:YES];
+}
+- (void) stopTimerIntervalGetLocationTracking {
+    NSLog(@"----stopTimerIntervalGetLocationTracking");
+    if (self.shareModel.timerIntervalGetLocationTracking) {
+        [self.shareModel.timerIntervalGetLocationTracking invalidate];
+        self.shareModel.timerIntervalGetLocationTracking = nil;
+    }
+}
+- (void) stopTimerIntervalUpdateLocationTracking {
+    NSLog(@"----stopTimerIntervalUpdateLocationTracking");
+    if (self.shareModel.timerIntervalUpdateLocationTracking) {
+        [self.shareModel.timerIntervalUpdateLocationTracking invalidate];
+        self.shareModel.timerIntervalUpdateLocationTracking = nil;
+    }
+}
+- (void) stopTimerDelayTracking {
+    NSLog(@"----stopTimerDelayTracking");
+    if (self.shareModel.timerDelayTracking) {
+        [self.shareModel.timerDelayTracking invalidate];
+        self.shareModel.timerDelayTracking = nil;
+    }
+}
+- (void) stopTimerProcessTracking {
+    NSLog(@"----stopTimerProcessTracking");
+    if (self.shareModel.timerProcessTracking) {
+        [self.shareModel.timerProcessTracking invalidate];
+        self.shareModel.timerProcessTracking = nil;
+    }
+}
+- (void) endTimerIntervalGetLocationTracking {
+    NSLog(@"----endTimerIntervalGetLocationTracking");
+    //function excute new location
+    [self updateLocationToServer];
+}
+- (void) endTimerIntervalUpdateLocationTracking {
+    NSLog(@"----endTimerIntervalUpdateLocationTracking");
+    //Get new location
+    [self restartLocationUpdates];
+}
+- (void) endTimerDelayTracking {
+    NSLog(@"----endTimerDelayTracking");
+    //Start process tracking
+    [self startTimerProcessTracking];
+    
+    //Start timer update location
+    [self startTimerIntervalUpdateLocationTracking];
+}
+- (void) endTimerProcessTracking {
+    NSLog(@"----endTimerProcessTracking");
+    //Stop process tracking
+    [self stopTimerProcessTracking];
+    
+    //Stop timer update location
+    [self stopTimerIntervalUpdateLocationTracking];
+    
+    //Start timer delay tracking
+    [self startTimerDelayTracking];
+    
+    //Begin delay time
+    [self stopLocationDelayTracking];
+}
 
 
 
