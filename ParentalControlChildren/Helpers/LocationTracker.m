@@ -23,6 +23,7 @@
 		if (_locationManager == nil) {
 			_locationManager = [[CLLocationManager alloc] init];
             _locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+            _locationManager.distanceFilter = kCLDistanceFilterNone;
 		}
 	}
 	return _locationManager;

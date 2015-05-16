@@ -147,4 +147,10 @@
     [self writeArrayToFileLocalTrackingLocation:arrInit];
 }
 
++ (void) removeFileLocalTrackingLocation {
+    NSString *filePath = [self pathOfFileLocalTrackingLocation];
+    NSError *error = nil;
+    [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
+}
+
 @end

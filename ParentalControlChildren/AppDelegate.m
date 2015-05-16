@@ -63,7 +63,7 @@
             self.shareModel.anotherLocationManager = [[CLLocationManager alloc]init];
             self.shareModel.anotherLocationManager.delegate = self;
             self.shareModel.anotherLocationManager.desiredAccuracy = kCLLocationAccuracyBest;
-            self.shareModel.anotherLocationManager.activityType = CLActivityTypeOtherNavigation;
+            self.shareModel.anotherLocationManager.distanceFilter = kCLDistanceFilterNone;
             
             if(IS_OS_8_OR_LATER) {
                 [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
@@ -105,7 +105,7 @@
     self.shareModel.anotherLocationManager = [[CLLocationManager alloc]init];
     self.shareModel.anotherLocationManager.delegate = self;
     self.shareModel.anotherLocationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.shareModel.anotherLocationManager.activityType = CLActivityTypeOtherNavigation;
+    self.shareModel.anotherLocationManager.distanceFilter = kCLDistanceFilterNone;
     
     if(IS_OS_8_OR_LATER) {
         [self.shareModel.anotherLocationManager requestAlwaysAuthorization];
@@ -117,6 +117,9 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
+    
+    //Remove all data
+    [Common removeFileLocalTrackingLocation];
 }
 
 #pragma mark - NOTIFICATION DELEGATE

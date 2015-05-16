@@ -36,6 +36,7 @@
 + (void) writeArrayToFileLocalTrackingLocation:(NSMutableArray *) arrToWrite;
 + (NSMutableArray *) readFileLocalTrackingLocation;
 + (void) writeObjToFileTrackingLocation:(NSDictionary *) dicObj;
++ (void) removeFileLocalTrackingLocation;
 
 
 @end
