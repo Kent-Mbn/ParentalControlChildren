@@ -160,4 +160,47 @@
     return (float)dist;
 }
 
+#pragma mark - Algorthim Checking Point In Polygon or In Circle
+
+/*
+ * a^2 = b^2 + c^2 - 2*b*ccosA -> cosA -> A (angle)
+ */
++ (BOOL) checkPointInsidePolygon:(NSMutableArray *) arrPonits andCheckPoint:(CLLocationCoordinate2D) checkPoint {
+    //? Lam sao de kiem tra 2 diem la canh cua mot da giac ???
+    float totalAngle = 0;
+    for (int i = 0; i < [arrPonits count]; i++) {
+        
+        int lastIndex = i + 1;
+        if (i == ([arrPonits count] - 1)) {
+            lastIndex = 0;
+        }
+        
+        CLLocation *firstPointT = [arrPonits objectAtIndex:i];
+        CLLocation *secondPointT = [arrPonits objectAtIndex:lastIndex];
+        totalAngle += [self angleOfThreePoints:checkPoint andSecondPoint:firstPointT.coordinate         andThirdPoint:secondPointT.coordinate];
+    }
+    NSLog(@"Angle la: %f", totalAngle);
+    
+    if (((2 * M_PI) - totalAngle) < 0.001) {
+        return YES;
+    }
+    return NO;
+}
++ (float) angleOfThreePoints:(CLLocationCoordinate2D)anglePoint andSecondPoint:(CLLocationCoordinate2D) secondPoint andThirdPoint:(CLLocationCoordinate2D)thirdPoint {
+    
+    //A = anglePoint B = secondPoint C = thirdPoint
+    //a = BC b = AC c = AB
+    //cosA = (b2 + c2 - a2) / (2.b.c)
+    
+    double a = [self calDistanceTwoCoordinate:secondPoint andSecondPoint:thirdPoint];
+    double b = [self calDistanceTwoCoordinate:anglePoint andSecondPoint:thirdPoint];
+    double c = [self calDistanceTwoCoordinate:anglePoint andSecondPoint:secondPoint];
+    
+    return acos((pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b * c));
+}
++ (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint {
+
+    return YES;
+}
+
 @end

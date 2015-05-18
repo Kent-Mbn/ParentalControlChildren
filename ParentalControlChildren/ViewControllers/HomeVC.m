@@ -34,7 +34,11 @@
 #pragma mark - ACTION
 - (IBAction)actionEmergency:(id)sender {
     //[Common showAlertView:APP_NAME message:MSS_NOTICE_SEND_SMS delegate:self cancelButtonTitle:@"Cancel" arrayTitleOtherButtons:@[@"Yes"] tag:0];
-    [self callWSGetSafeArea];
+    if ([Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocation]) {
+        NSLog(@"Nam trong!");
+    } else {
+        NSLog(@"Nam ngoai!");
+    }
 }
 
 - (IBAction)actionSettings:(id)sender {
