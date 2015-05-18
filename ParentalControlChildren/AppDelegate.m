@@ -40,6 +40,7 @@
     
     self.shareModel = [LocationShareModel sharedModel];
     self.shareModel.afterResume = NO;
+    typeSafeArea = radiusShape;
     
     //We have to make sure that the Background App Refresh is enable for the Location updates to work in the background.
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied){
@@ -206,7 +207,8 @@
     NSDictionary *theData = [noti userInfo];
     if (theData != nil) {
         NSLog(@"+++ New location: %@", theData);
-        [Common writeObjToFileTrackingLocation:theData];
+        //[Common writeObjToFileTrackingLocation:theData];
+        lastLocationAppDelegate = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
     }
 }
 
@@ -298,6 +300,97 @@
             abort();
         }
     }
+}
+
+#pragma mark - Checking safe area
+- (void) beginCheckingSafeArea {
+    self.shareModel.bgTask = [BackgroundTaskManager sharedBackgroundTaskManager];
+    [self.shareModel.bgTask beginNewBackgroundTask];
+    [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
+                                     target:self
+                                   selector:@selector(endTimerCheckingSafeArea)
+                                   userInfo:nil
+                                    repeats:YES];
+}
+
+- (void) endTimerCheckingSafeArea {
+    [self updateSafeArea];
+    if (typeSafeArea == radiusShape) {
+        if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
+            [self callPushNotification];
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                [self callMessageVC];
+            }
+        }
+    } else {
+        if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
+            [self callPushNotification];
+            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                [self callMessageVC];
+            }
+        }
+    }
+}
+
+- (void) updateSafeArea {
+    [Common showNetworkActivityIndicator];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
+    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideNetworkActivityIndicator];
+        NSLog(@"response: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            NSArray *arrData = (NSArray *)responseObject;
+            NSArray *arrSafeAreaData;
+            if (arrData[0] != nil) {
+                NSDictionary *dicData = arrData[0];
+                arrSafeAreaData = dicData[@"safeArea"];
+            } else {
+                return;
+            }
+            if ([arrSafeAreaData count] == 1) {
+                //Draw circle
+                typeSafeArea = radiusShape;
+                NSDictionary *objPoint = [arrSafeAreaData objectAtIndex:0];
+                [[UserDefault user] setLats:objPoint[@"latitude"]];
+                [[UserDefault user] setLongs:objPoint[@"longitude"]];
+                [[UserDefault user] setRadiusCircle:objPoint[@"radius"]];
+                
+                centerPointCircle = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", objPoint[@"latitude"], objPoint[@"longitude"]]];
+                radiusCircle = [objPoint[@"radius"] intValue];
+                
+            } else {
+                //Draw polygon
+                typeSafeArea = polygonShape;
+                [[UserDefault user] setRadiusCircle:@"0"];
+                NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+                for (int i = 0; i < [arrSafeAreaData count]; i++) {
+                    NSDictionary *objPoint = [arrSafeAreaData objectAtIndex:i];
+                    CLLocation *locationPoint = [[CLLocation alloc] initWithLatitude:[objPoint[@"latitude"] doubleValue] longitude:[objPoint[@"longitude"] doubleValue]];
+                    [arrLocations addObject:locationPoint];
+                }
+                [[UserDefault user] setLats:[Common returnStringArrayLat:arrLocations]];
+                [[UserDefault user] setLongs:[Common returnStringArrayLong:arrLocations]];
+                _arrayForPolygon = arrLocations;
+            }
+        } else {
+            //Return error
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideNetworkActivityIndicator];
+        NSLog(@"Error: %@", error.description);
+    }];
+}
+
+- (void) callMessageVC {
+    
+}
+
+- (void) callPushNotification {
+    
 }
 
 @end

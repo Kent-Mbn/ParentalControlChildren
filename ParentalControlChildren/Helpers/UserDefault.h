@@ -15,6 +15,9 @@
 @property(nonatomic,strong) NSString *email;
 @property(nonatomic,strong) NSString *full_name;
 @property(nonatomic,strong) NSString *content_mss;
+@property(nonatomic,strong) NSString *lats;
+@property(nonatomic,strong) NSString *longs;
+@property(nonatomic,strong) NSString *radiusCircle;
 
 + (UserDefault *) user;
 - (void) update;

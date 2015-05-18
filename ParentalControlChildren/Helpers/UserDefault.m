@@ -28,6 +28,9 @@ static UserDefault *globalObject;
         self.token_device = [aDecoder decodeObjectForKey:@"token_device"];
         self.full_name = [aDecoder decodeObjectForKey:@"full_name"];
         self.content_mss = [aDecoder decodeObjectForKey:@"content_mss"];
+        self.lats = [aDecoder decodeObjectForKey:@"lats"];
+        self.longs = [aDecoder decodeObjectForKey:@"longs"];
+        self.radiusCircle = [aDecoder decodeObjectForKey:@"radiusCircle"];
     }
     
     return self;
@@ -40,6 +43,9 @@ static UserDefault *globalObject;
     [aCoder encodeObject:self.token_device forKey:@"token_device"];
     [aCoder encodeObject:self.full_name forKey:@"full_name"];
     [aCoder encodeObject:self.content_mss forKey:@"content_mss"];
+    [aCoder encodeObject:self.lats forKey:@"lats"];
+    [aCoder encodeObject:self.longs forKey:@"longs"];
+    [aCoder encodeObject:self.radiusCircle forKey:@"radiusCircle"];
 }
 
 - (void) updateUserDefault
@@ -56,6 +62,9 @@ static UserDefault *globalObject;
     user.token_device = nil;
     user.full_name = nil;
     user.content_mss = nil;
+    user.lats = nil;
+    user.longs = nil;
+    user.radiusCircle = nil;
     [user update];
 }
 

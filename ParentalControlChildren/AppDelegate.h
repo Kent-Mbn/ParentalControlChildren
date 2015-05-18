@@ -17,9 +17,22 @@
 #import <CoreLocation/CoreLocation.h>
 #import "LocationTracker.h"
 
+typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
+    radiusShape = 0,
+    polygonShape = 1,
+};
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate, CLLocationManagerDelegate> {
     NSString *strPusherId;
     NSString *strChildId;
+    
+    CLLocationCoordinate2D lastLocationAppDelegate;
+    
+    NSTypeOfSafeArea typeSafeArea;
+    
+    //Circle Safe Area
+    int radiusCircle;
+    CLLocationCoordinate2D centerPointCircle;
 }
 
 @property (strong, nonatomic) UIWindow *window;
@@ -33,8 +46,15 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+
+//Polygon safearea
+@property (nonatomic, strong) NSMutableArray *arrayForPolygon;
+
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+
+//Checking SafeArea
+- (void) beginCheckingSafeArea;
 
 @end
 

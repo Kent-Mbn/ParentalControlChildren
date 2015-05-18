@@ -21,11 +21,6 @@ typedef NS_ENUM(NSInteger, NSTypeMap) {
     NSTypeMapSatellite = 1,
 };
 
-typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
-    radiusShape = 0,
-    polygonShape = 1,
-};
-
 @interface HomeVC : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate> {
     NSTypeMap *typeMap;
     CLLocationCoordinate2D lastLocation;

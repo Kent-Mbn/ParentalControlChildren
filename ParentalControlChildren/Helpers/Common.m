@@ -160,6 +160,50 @@
     return (float)dist;
 }
 
++ (NSString *) returnStringArrayLat:(NSMutableArray *) arrData {
+    NSString *strReturn = @"";
+    if ([arrData count] > 0) {
+        for (int i = 0; i < [arrData count]; i++) {
+            CLLocation *objLocation = [arrData objectAtIndex:i];
+            if (i == [arrData count] - 1) {
+                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@", @(objLocation.coordinate.latitude)]];
+            } else {
+                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@;", @(objLocation.coordinate.latitude)]];
+            }
+        }
+    }
+    return strReturn;
+}
+
++ (NSString *) returnStringArrayLong:(NSMutableArray *) arrData {
+    NSString *strReturn = @"";
+    if ([arrData count] > 0) {
+        for (int i = 0; i < [arrData count]; i++) {
+            CLLocation *objLocation = [arrData objectAtIndex:i];
+            if (i == [arrData count] - 1) {
+                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@", @(objLocation.coordinate.longitude)]];
+            } else {
+                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@;", @(objLocation.coordinate.longitude)]];
+            }
+        }
+    }
+    return strReturn;
+}
+
++ (NSMutableArray *) returnArrayLocations:(NSString *) strLats andLongs:(NSString *)strLongs {
+    NSArray *arrLats = [strLats componentsSeparatedByString:@";"];
+    NSArray *arrLongs = [strLongs componentsSeparatedByString:@";"];
+    if ([arrLats count] > 0 && [arrLongs count] > 0 && [arrLats count] == [arrLongs count]) {
+        NSMutableArray *arrResult = [[NSMutableArray alloc] init];
+        for (int i = 0; i < [arrLats count]; i++) {
+            CLLocation *locationObj = [[CLLocation alloc] initWithLatitude:[[arrLats objectAtIndex:i] doubleValue] longitude:[[arrLongs objectAtIndex:i] doubleValue]];
+            [arrResult addObject:locationObj];
+        }
+        return arrResult;
+    }
+    return nil;
+}
+
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 
 /*

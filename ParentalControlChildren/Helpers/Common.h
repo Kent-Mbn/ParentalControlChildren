@@ -40,6 +40,10 @@
 
 + (float) calDistanceTwoCoordinate:(CLLocationCoordinate2D)firstPoint andSecondPoint:(CLLocationCoordinate2D)secondPoint;
 
++ (NSString *) returnStringArrayLat:(NSMutableArray *) arrData;
++ (NSString *) returnStringArrayLong:(NSMutableArray *) arrData;
++ (NSArray *) returnArrayLocations:(NSString *) strLats andLongs:(NSString *)strLongs;
+
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 + (BOOL) checkPointInsidePolygon:(NSMutableArray *) arrPonits andCheckPoint:(CLLocationCoordinate2D) checkPoint;
 + (float) angleOfThreePoints:(CLLocationCoordinate2D)anglePoint andSecondPoint:(CLLocationCoordinate2D) secondPoint andThirdPoint:(CLLocationCoordinate2D)thirdPoint;

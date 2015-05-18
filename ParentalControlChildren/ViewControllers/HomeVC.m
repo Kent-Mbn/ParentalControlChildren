@@ -25,6 +25,10 @@
                                                object:nil];
     typeSafeArea = radiusShape;
     _arrayForPolygon = [[NSMutableArray alloc] init];
+    
+    //Start system checking safe area
+    AppDelegate *delegateShare = APP_DELEGATE;
+    [delegateShare beginCheckingSafeArea];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
