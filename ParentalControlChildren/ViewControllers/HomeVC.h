@@ -21,14 +21,29 @@ typedef NS_ENUM(NSInteger, NSTypeMap) {
     NSTypeMapSatellite = 1,
 };
 
+typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
+    radiusShape = 0,
+    polygonShape = 1,
+};
+
 @interface HomeVC : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate> {
     NSTypeMap *typeMap;
     CLLocationCoordinate2D lastLocation;
+    
+    NSTypeOfSafeArea typeSafeArea;
+    
+    int radiusCircle;
+    CLLocationCoordinate2D centerPointCircle;
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *btTypeMap;
 @property (weak, nonatomic) IBOutlet UIView *viewBottomBar;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;
+
+@property (nonatomic, strong) NSMutableArray *arrayForPolygon;
+@property (nonatomic, strong) MKPolygon *polygon;
+@property (nonatomic, strong) MKPolygonView *polygonView;
+
 - (IBAction)actionEmergency:(id)sender;
 - (IBAction)actionSettings:(id)sender;
 - (IBAction)actionChangeMapType:(id)sender;

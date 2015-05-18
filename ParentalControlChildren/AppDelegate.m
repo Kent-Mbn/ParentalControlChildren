@@ -215,8 +215,10 @@
     CLLocation *location = [locations lastObject];
     
     //Write location to file
+    /*
     NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(location.coordinate.latitude),@(location.coordinate.longitude),@"killed"] forKeys:@[@"lat",@"long",@"type"]];
     [Common writeObjToFileTrackingLocation:dicObj];
+     */
 }
 
 
