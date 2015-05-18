@@ -39,6 +39,9 @@
 #define MSS_CONFIRM_FAILED @"Confirm failed!"
 #define MSS_CONFIRM_SUCCESS @"Confirm successfully!"
 
+#define MSS_PUSH_NOTI_OUT_SAFE_AREA @"Out safe area!!!"
+#define MSS_PUSH_NOTI_FAILED @"Push notification failed!!"
+
 #pragma mark - ADDRESS BOOK
 #define MSS_DENIED @"You must give the app permission to add the contact first."
 
