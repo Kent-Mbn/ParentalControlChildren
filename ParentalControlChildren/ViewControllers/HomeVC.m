@@ -10,25 +10,23 @@
 
 @implementation HomeVC
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:kNotificationGetNewLocation object:nil];
+}
+
 - (void) viewDidLoad {
     typeMap = NSTypeMapStandard;
     [self changeStatusOfButtonMapType];
     _viewBottomBar.backgroundColor = masterColor;
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(returnNewLocation:)
+                                                 name:kNotificationGetNewLocation
+                                               object:nil];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    // Load all location and show to map
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    NSLog(@"Tracking location: %@", arrDataLocation);
-    if ([arrDataLocation count] > 0) {
-        for (int i = 0; i < [arrDataLocation count]; i++) {
-            NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
-            CLLocationCoordinate2D pointLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", objDic[@"lat"], objDic[@"long"]]];
-            [self addPinViewToMap:pointLocation];
-        }
-    }
     
-    //[self zoomToFitMapAnnotations];
 }
 
 #pragma mark - ACTION
@@ -52,6 +50,22 @@
 }
 
 #pragma mark - FUNCTION
+
+-(void) loadAllLocationsToMap {
+    //Load all location and show to map
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    NSLog(@"Tracking location: %@", arrDataLocation);
+    if ([arrDataLocation count] > 0) {
+        for (int i = 0; i < [arrDataLocation count]; i++) {
+            NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
+            CLLocationCoordinate2D pointLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", objDic[@"lat"], objDic[@"long"]]];
+            [self addPinViewToMap:pointLocation];
+        }
+    }
+    
+    //[self zoomToFitMapAnnotations];
+}
+
 -(void) changeStatusOfButtonMapType {
     if (typeMap == NSTypeMapStandard) {
         [_btTypeMap setBackgroundImage:[UIImage imageNamed:@"map_standard.png"] forState:UIControlStateNormal];
@@ -60,7 +74,7 @@
     }
 }
 
--(void) addAndFocusPinViewToMapAndUpdateToServer:(CLLocation *) locationPoint {
+-(void) addAndFocusPinViewToMap:(CLLocation *) locationPoint {
     //Remove all pin to map before add new pin
     [_mapView removeAnnotations:_mapView.annotations];
     
@@ -104,7 +118,7 @@
         [_mapView selectAnnotation:pointAnn animated:YES];
         
         //Update current location to server
-        [self callWSUpdateHistoryLocation:point andAddress:placemark.name];
+        //[self callWSUpdateHistoryLocation:point andAddress:placemark.name];
     }];
 }
 
@@ -150,6 +164,26 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
     }];
+}
+
+- (void) returnNewLocation :(NSNotification *) noti {
+    NSDictionary *theData = [noti userInfo];
+    if (theData != nil) {
+        NSLog(@"New location add Home: %@", theData);
+        CLLocationCoordinate2D newLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
+        
+        //Checking distance from old location and new location
+        if (CLLocationCoordinate2DIsValid(lastLocation)) {
+            if ([Common calDistanceTwoCoordinate:lastLocation andSecondPoint:newLocation] > distanceCheckingFilter) {
+                lastLocation = newLocation;
+                
+                //Update map again
+                [_mapView removeAnnotations:_mapView.annotations];
+                CLLocation *locationUpdate = [[CLLocation alloc] initWithLatitude:[theData[@"lat"] doubleValue] longitude:[theData[@"long"] doubleValue]];
+                [self addAndFocusPinViewToMap:locationUpdate];
+            }
+        }
+    }
 }
 
 #pragma mark - MAP DELEGATE

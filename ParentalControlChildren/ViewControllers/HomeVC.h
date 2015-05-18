@@ -23,7 +23,9 @@ typedef NS_ENUM(NSInteger, NSTypeMap) {
 
 @interface HomeVC : UIViewController <MKMapViewDelegate, CLLocationManagerDelegate> {
     NSTypeMap *typeMap;
+    CLLocationCoordinate2D lastLocation;
 }
+
 @property (weak, nonatomic) IBOutlet UIButton *btTypeMap;
 @property (weak, nonatomic) IBOutlet UIView *viewBottomBar;
 @property (weak, nonatomic) IBOutlet MKMapView *mapView;

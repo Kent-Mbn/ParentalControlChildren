@@ -153,4 +153,11 @@
     [[NSFileManager defaultManager] removeItemAtPath:filePath error:&error];
 }
 
++ (float) calDistanceTwoCoordinate:(CLLocationCoordinate2D)firstPoint andSecondPoint:(CLLocationCoordinate2D)secondPoint {
+    CLLocation *userloc = [[CLLocation alloc]initWithLatitude:firstPoint.latitude longitude:firstPoint.longitude];
+    CLLocation *dest = [[CLLocation alloc]initWithLatitude:secondPoint.latitude longitude:secondPoint.longitude];
+    CLLocationDistance dist = [userloc distanceFromLocation:dest];
+    return (float)dist;
+}
+
 @end

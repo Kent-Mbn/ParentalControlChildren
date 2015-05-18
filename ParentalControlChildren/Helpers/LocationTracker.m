@@ -164,8 +164,6 @@
 //Send the location to Server
 - (void)updateLocationToServer {
     //Your code to send the self.myLocation and self.myLocationAccuracy to your server
-
-    NSLog(@"Log location long: %@", @(self.myLastLocation.longitude));
     NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(self.myLastLocation.latitude),@(self.myLastLocation.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
     [[NSNotificationCenter defaultCenter] postNotificationName:kNotificationGetNewLocation object:self userInfo:dicObj];
 }

@@ -38,5 +38,7 @@
 + (void) writeObjToFileTrackingLocation:(NSDictionary *) dicObj;
 + (void) removeFileLocalTrackingLocation;
 
++ (float) calDistanceTwoCoordinate:(CLLocationCoordinate2D)firstPoint andSecondPoint:(CLLocationCoordinate2D)secondPoint;
+
 
 @end

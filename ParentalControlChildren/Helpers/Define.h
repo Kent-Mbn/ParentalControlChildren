@@ -13,6 +13,9 @@
 #define timeTrackingLocation 5
 #define timePauseTrackingLocation 5
 
+//met
+#define distanceCheckingFilter 2
+
 #pragma mark - CODE RESPONE FROM SERVER
 #define CODE_RESPONE_SUCCESS 0
 
