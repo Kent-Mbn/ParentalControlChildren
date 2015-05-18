@@ -198,9 +198,14 @@
     
     return acos((pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2 * b * c));
 }
-+ (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint {
-
-    return YES;
++ (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint andCheckPoint:(CLLocationCoordinate2D) checkPoint {
+    
+    //Distance of checkpoint and centerPoint
+    float distancePoints = [self calDistanceTwoCoordinate:centerPoint andSecondPoint:checkPoint];
+    if (distancePoints - radiusCircle <= 0) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

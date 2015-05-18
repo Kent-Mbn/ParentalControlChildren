@@ -43,7 +43,7 @@
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 + (BOOL) checkPointInsidePolygon:(NSMutableArray *) arrPonits andCheckPoint:(CLLocationCoordinate2D) checkPoint;
 + (float) angleOfThreePoints:(CLLocationCoordinate2D)anglePoint andSecondPoint:(CLLocationCoordinate2D) secondPoint andThirdPoint:(CLLocationCoordinate2D)thirdPoint;
-+ (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint;
++ (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint andCheckPoint:(CLLocationCoordinate2D) checkPoint;
 
 
 @end
