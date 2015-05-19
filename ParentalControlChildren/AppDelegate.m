@@ -135,7 +135,7 @@
     [self saveContext];
     
     //Remove all data
-    [Common removeFileLocalTrackingLocation];
+    //[Common removeFileLocalTrackingLocation];
 }
 
 #pragma mark - NOTIFICATION DELEGATE
@@ -207,20 +207,23 @@
     NSDictionary *theData = [noti userInfo];
     if (theData != nil) {
         NSLog(@"+++ New location: %@", theData);
-        //[Common writeObjToFileTrackingLocation:theData];
-        lastLocationAppDelegate = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
+        CLLocationCoordinate2D newLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
+        if (CLLocationCoordinate2DIsValid(lastLocationAppDelegate)) {
+            if ([Common calDistanceTwoCoordinate:lastLocationAppDelegate andSecondPoint:newLocation] > distanceCheckingFilter) {
+                lastLocationAppDelegate = newLocation;
+                //Write location to file
+                 NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(lastLocationAppDelegate.latitude),@(lastLocationAppDelegate.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
+                 [Common writeObjToFileTrackingLocation:dicObj];
+            }
+        }
     }
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *location = [locations lastObject];
-    
-    //Write location to file
-    /*
     NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(location.coordinate.latitude),@(location.coordinate.longitude),@"killed"] forKeys:@[@"lat",@"long",@"type"]];
     [Common writeObjToFileTrackingLocation:dicObj];
-     */
 }
 
 
@@ -304,9 +307,7 @@
 
 #pragma mark - Checking safe area
 - (void) beginCheckingSafeArea {
-    self.shareModel.bgTask = [BackgroundTaskManager sharedBackgroundTaskManager];
-    [self.shareModel.bgTask beginNewBackgroundTask];
-    [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
+    self.timerTrackingSafeArea = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
                                      target:self
                                    selector:@selector(endTimerCheckingSafeArea)
                                    userInfo:nil
@@ -411,6 +412,42 @@
         NSLog(@"Error: %@", error.description);
         [Common showAlertView:APP_NAME message:MSS_PUSH_NOTI_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
     }];
+}
+
+#pragma mark - Tracking save locations history
+- (void) beginTrackingSaveLocations {
+    self.timerTrackingSaveLocations = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
+                                                                  target:self
+                                                                selector:@selector(endTimerTrackingSaveLocations)
+                                                                userInfo:nil
+                                                                 repeats:YES];
+}
+
+- (void) endTimerTrackingSaveLocations {
+    NSLog(@"+++++++++++++ SAVE LOCATIONS ++++++++++++++++");
+    //Send all locations to server
+    
+    /* Get all locations from file */
+    //Load all location and show to map
+    NSString *strLats = @"";
+    NSString *strLongs = @"";
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    if ([arrDataLocation count] > 0) {
+        NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+        for (int i = 0; i < [arrDataLocation count]; i++) {
+            NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
+            CLLocation *locObj = [[CLLocation alloc] initWithLatitude:[objDic[@"lat"] doubleValue] longitude:[objDic[@"long"] doubleValue]];
+        }
+        strLats = [Common returnStringArrayLat:arrLocations];
+        strLongs = [Common returnStringArrayLong:arrLocations];
+    }
+    
+    //Call WS save to server
+    
+}
+
+- (void) callWSSaveLocations:() {
+    
 }
 
 @end

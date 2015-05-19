@@ -50,11 +50,20 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
 //Polygon safearea
 @property (nonatomic, strong) NSMutableArray *arrayForPolygon;
 
+//Timer checking safearea
+@property (nonatomic) NSTimer *timerTrackingSafeArea;
+
+//Timer tracking save locations
+@property (nonatomic) NSTimer *timerTrackingSaveLocations;
+
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
 //Checking SafeArea
 - (void) beginCheckingSafeArea;
+
+//Tracking save locations
+- (void) beginTrackingSaveLocations;
 
 @end
 

@@ -27,12 +27,25 @@
     _arrayForPolygon = [[NSMutableArray alloc] init];
     
     //Start system checking safe area
+
     AppDelegate *delegateShare = APP_DELEGATE;
+    /*
+    if (delegateShare.timerTrackingSafeArea) {
+        [delegateShare.timerTrackingSafeArea invalidate];
+        delegateShare.timerTrackingSafeArea = nil;
+    }
     [delegateShare beginCheckingSafeArea];
+     */
+    
+    if (delegateShare.timerTrackingSaveLocations) {
+        [delegateShare.timerTrackingSaveLocations invalidate];
+        delegateShare.timerTrackingSaveLocations = nil;
+    }
+    [delegateShare beginTrackingSaveLocations];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    [self callWSGetSafeArea];
+    //[self callWSGetSafeArea];
 }
 
 #pragma mark - ACTION
