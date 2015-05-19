@@ -208,6 +208,9 @@
     if (theData != nil) {
         NSLog(@"+++ New location: %@", theData);
         CLLocationCoordinate2D newLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
+        lastLocationAppDelegate = newLocation;
+        
+        /*
         if (CLLocationCoordinate2DIsValid(lastLocationAppDelegate)) {
             if ([Common calDistanceTwoCoordinate:lastLocationAppDelegate andSecondPoint:newLocation] > distanceCheckingFilter) {
                 lastLocationAppDelegate = newLocation;
@@ -216,6 +219,7 @@
                  [Common writeObjToFileTrackingLocation:dicObj];
             }
         }
+         */
     }
 }
 
@@ -305,7 +309,7 @@
     }
 }
 
-#pragma mark - Checking safe area
+#pragma mark - CHECKING SAFE AREA
 - (void) beginCheckingSafeArea {
     self.timerTrackingSafeArea = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
                                      target:self
@@ -414,40 +418,137 @@
     }];
 }
 
-#pragma mark - Tracking save locations history
+#pragma mark - TRACKING SAVE LOCATIONS HISTORY
 - (void) beginTrackingSaveLocations {
-    self.timerTrackingSaveLocations = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
+    if (self.timerTrackingSaveLocations) {
+        [self.timerTrackingSaveLocations invalidate];
+        self.timerTrackingSaveLocations = nil;
+    }
+    if (self.timerTrackingSaveLocationsMoving) {
+        [self.timerTrackingSaveLocationsMoving invalidate];
+        self.timerTrackingSaveLocationsMoving = nil;
+    }
+    self.timerTrackingSaveLocations = [NSTimer scheduledTimerWithTimeInterval:timeTrackingSaveLocations
                                                                   target:self
                                                                 selector:@selector(endTimerTrackingSaveLocations)
                                                                 userInfo:nil
                                                                  repeats:YES];
+    self.timerTrackingSaveLocations = [NSTimer scheduledTimerWithTimeInterval:timeTrackingSaveLocationsMoving
+                                                                       target:self
+                                                                     selector:@selector(endTimerTrackingSaveLocationsMoving)
+                                                                     userInfo:nil
+                                                                      repeats:YES];
+    centerTrackingMoving = middleTrackingMoving = lastLocationAppDelegate;
+}
+
+- (void) restartTrackingSaveLocationsMoving {
+    if (self.timerRestartTrackingSaveLocationsMoving) {
+        [self.timerRestartTrackingSaveLocationsMoving invalidate];
+        self.timerRestartTrackingSaveLocationsMoving = nil;
+    }
+    self.timerRestartTrackingSaveLocationsMoving = [NSTimer scheduledTimerWithTimeInterval:10
+                                                                       target:self
+                                                                     selector:@selector(endTimerRestartTrackingSaveLocationsMoving)
+                                                                     userInfo:nil
+                                                                      repeats:YES];
+}
+
+- (void) callWSAddNewLocation:(CLLocationCoordinate2D) newPoint {
+    [Common showNetworkActivityIndicator];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            @"latitude":@(newPoint.latitude),
+                                            @"longitude":@(newPoint.longitude),
+                                            @"address":@"address",
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideNetworkActivityIndicator];
+        NSLog(@"response: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            //Continue to send local history to server
+            NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+            if ([arrDataLocation count] > 0) {
+                NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+                for (int i = 0; i < [arrDataLocation count]; i++) {
+                    NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
+                    CLLocation *locObj = [[CLLocation alloc] initWithLatitude:[objDic[@"lat"] doubleValue] longitude:[objDic[@"long"] doubleValue]];
+                    [arrLocations addObject:locObj];
+                }
+                [self callWSAddOldLocation:arrLocations];
+            }
+        } else {
+            //Save to local
+            [self savePointToLocal:newPoint];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideNetworkActivityIndicator];
+        //Save to local
+        [self savePointToLocal:newPoint];
+    }];
+
+}
+
+- (void) callWSAddOldLocation:(NSMutableArray *) arrPoints {
+    NSString *strLats = @"";
+    NSString *strLongs = @"";
+    strLats = [Common returnStringArrayLat:arrPoints];
+    strLongs = [Common returnStringArrayLong:arrPoints];
+    
+    [Common showNetworkActivityIndicator];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            @"latitude":strLats,
+                                            @"longitude":strLongs,
+                                            @"created_at":@([[NSDate date] timeIntervalSince1970]),
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideNetworkActivityIndicator];
+        NSLog(@"response: %@", responseObject);
+        if ([Common validateRespone:responseObject]) {
+            //Remove all data in local
+            [Common removeFileLocalTrackingLocation];
+        } else {
+            //Return error
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideNetworkActivityIndicator];
+    }];
+}
+
+- (void) savePointToLocal:(CLLocationCoordinate2D) localPoint {
+    //Write location to file
+    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(localPoint.latitude),@(localPoint.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
+    [Common writeObjToFileTrackingLocation:dicObj];
 }
 
 - (void) endTimerTrackingSaveLocations {
-    NSLog(@"+++++++++++++ SAVE LOCATIONS ++++++++++++++++");
-    //Send all locations to server
-    
-    /* Get all locations from file */
-    //Load all location and show to map
-    NSString *strLats = @"";
-    NSString *strLongs = @"";
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    if ([arrDataLocation count] > 0) {
-        NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [arrDataLocation count]; i++) {
-            NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
-            CLLocation *locObj = [[CLLocation alloc] initWithLatitude:[objDic[@"lat"] doubleValue] longitude:[objDic[@"long"] doubleValue]];
-        }
-        strLats = [Common returnStringArrayLat:arrLocations];
-        strLongs = [Common returnStringArrayLong:arrLocations];
-    }
-    
-    //Call WS save to server
-    
+    [self callWSAddNewLocation:lastLocationAppDelegate];
 }
 
-- (void) callWSSaveLocations:() {
-    
+- (void) endTimerTrackingSaveLocationsMoving {
+    //Check tracking point is out side radius tracking moving
+    if ([Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate] >= radiusTrackingSaveLocationMoving) {
+        // IS out side
+        //Call add new location to server
+        [self callWSAddNewLocation:lastLocationAppDelegate];
+        
+        //Restart process
+        [self restartTrackingSaveLocationsMoving];
+    } else {
+        if ([Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate] > distanceCheckingFilter) {
+            //Save to local
+            [self savePointToLocal:lastLocationAppDelegate];
+        }
+    }
+    middleTrackingMoving = lastLocationAppDelegate;
+}
+
+- (void) endTimerRestartTrackingSaveLocationsMoving {
+    [self.timerRestartTrackingSaveLocationsMoving invalidate];
+    self.timerRestartTrackingSaveLocationsMoving = nil;
+    [self beginCheckingSafeArea];
 }
 
 @end

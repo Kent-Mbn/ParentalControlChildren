@@ -12,8 +12,11 @@
 #define kNotificationGetNewLocation @"kNotificationGetNewLocation"
 #define timeTrackingLocation 5
 #define timePauseTrackingLocation 5
-
 #define timeCheckingSafeArea 10
+
+#define timeTrackingSaveLocations 300
+#define timeTrackingSaveLocationsMoving 5
+#define radiusTrackingSaveLocationMoving 100
 
 //met
 #define distanceCheckingFilter 2

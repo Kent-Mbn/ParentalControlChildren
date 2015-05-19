@@ -33,6 +33,10 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
     //Circle Safe Area
     int radiusCircle;
     CLLocationCoordinate2D centerPointCircle;
+    
+    //Tracking save location
+    CLLocationCoordinate2D centerTrackingMoving;
+    CLLocationCoordinate2D middleTrackingMoving;
 }
 
 @property (strong, nonatomic) UIWindow *window;
@@ -55,6 +59,9 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
 
 //Timer tracking save locations
 @property (nonatomic) NSTimer *timerTrackingSaveLocations;
+@property (nonatomic) NSTimer *timerTrackingSaveLocationsMoving;
+@property (nonatomic) NSTimer *timerRestartTrackingSaveLocationsMoving;
+
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;

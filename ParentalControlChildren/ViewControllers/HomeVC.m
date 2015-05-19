@@ -35,13 +35,14 @@
         delegateShare.timerTrackingSafeArea = nil;
     }
     [delegateShare beginCheckingSafeArea];
-     */
+     
     
     if (delegateShare.timerTrackingSaveLocations) {
         [delegateShare.timerTrackingSaveLocations invalidate];
         delegateShare.timerTrackingSaveLocations = nil;
     }
     [delegateShare beginTrackingSaveLocations];
+     */
 }
 
 - (void) viewWillAppear:(BOOL)animated {

@@ -17,6 +17,7 @@
 #define API_DEVICE_REGISTER @"/device/register"
 #define API_DEVICE_CONFIRM_REQUEST_PAIR(parent_id, child_id) [NSString stringWithFormat:@"/userdevice/updatestatus/%@/%@",parent_id, child_id]
 #define API_ADD_NEW_HISTORY_DEVICE(device_id) [NSString stringWithFormat:@"/history/create/%@", device_id]
+#define API_ADD_OLD_HISTORY_DEVICE(device_id) [NSString stringWithFormat:@"/history/addoldhistory/%@", device_id]
 #define API_GET_SAFE_AREA(child_id) [NSString stringWithFormat:@"/safearea/getsafearea/%@",child_id]
 #define API_PUSH_NOTIFICATION @"/userdevice/pushnotificationios"
 
