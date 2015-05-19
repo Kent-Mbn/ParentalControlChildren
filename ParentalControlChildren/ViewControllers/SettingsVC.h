@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SettingsCell.h"
 #import "Define.h"
+#import "Common.h"
 
 @interface SettingsVC : UIViewController<UITableViewDataSource, UITableViewDelegate>
 - (IBAction)actionBack:(id)sender;

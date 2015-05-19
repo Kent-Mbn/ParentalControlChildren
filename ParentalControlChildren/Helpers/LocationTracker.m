@@ -103,7 +103,7 @@
 
 
 - (void)stopLocationTracking {
-    NSLog(@"stopLocationTracking");
+    //NSLog(@"stopLocationTracking");
     
 	CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
 	[locationManager stopUpdatingLocation];
@@ -120,7 +120,7 @@
     [locationManager stopUpdatingLocation];
     
     //Only get last location
-    NSLog(@"Update locations: %@", locations);
+    //NSLog(@"Update locations: %@", locations);
     CLLocation * newLocation = [locations lastObject];
     self.myLastLocation = newLocation.coordinate;
     self.myLastLocationAccuracy= newLocation.horizontalAccuracy;
@@ -171,7 +171,7 @@
 #pragma mark - TIMER
 - (void) startTimerIntervalGetLocationTracking {
     [self stopTimerIntervalGetLocationTracking];
-    NSLog(@"---startTimerIntervalGetLocationTracking");
+    //NSLog(@"---startTimerIntervalGetLocationTracking");
     self.shareModel.timerIntervalGetLocationTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeIntervalGetLocationTracking
                                                                           target:self
                                                                         selector:@selector(endTimerIntervalGetLocationTracking)
@@ -180,7 +180,7 @@
 }
 - (void) startTimerIntervalUpdateLocationTracking {
     [self stopTimerIntervalUpdateLocationTracking];
-    NSLog(@"---startTimerIntervalUpdateLocationTracking");
+    //NSLog(@"---startTimerIntervalUpdateLocationTracking");
     self.shareModel.timerIntervalUpdateLocationTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeIntervalGetLocationTracking
                                                                           target:self
                                                                         selector:@selector(endTimerIntervalUpdateLocationTracking)
@@ -189,7 +189,7 @@
 }
 - (void) startTimerDelayTracking {
     [self stopTimerDelayTracking];
-    NSLog(@"---startTimerDelayTracking");
+    //NSLog(@"---startTimerDelayTracking");
     self.shareModel.timerDelayTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeDelayTracking
                                                                           target:self
                                                                         selector:@selector(endTimerDelayTracking)
@@ -198,7 +198,7 @@
 }
 - (void) startTimerProcessTracking {
     [self stopTimerProcessTracking];
-    NSLog(@"---startTimerProcessTracking");
+    //NSLog(@"---startTimerProcessTracking");
     self.shareModel.timerProcessTracking = [NSTimer scheduledTimerWithTimeInterval:self.timeProcessTracking
                                                                           target:self
                                                                         selector:@selector(endTimerProcessTracking)
@@ -206,45 +206,45 @@
                                                                          repeats:YES];
 }
 - (void) stopTimerIntervalGetLocationTracking {
-    NSLog(@"----stopTimerIntervalGetLocationTracking");
+    //NSLog(@"----stopTimerIntervalGetLocationTracking");
     if (self.shareModel.timerIntervalGetLocationTracking) {
         [self.shareModel.timerIntervalGetLocationTracking invalidate];
         self.shareModel.timerIntervalGetLocationTracking = nil;
     }
 }
 - (void) stopTimerIntervalUpdateLocationTracking {
-    NSLog(@"----stopTimerIntervalUpdateLocationTracking");
+    //NSLog(@"----stopTimerIntervalUpdateLocationTracking");
     if (self.shareModel.timerIntervalUpdateLocationTracking) {
         [self.shareModel.timerIntervalUpdateLocationTracking invalidate];
         self.shareModel.timerIntervalUpdateLocationTracking = nil;
     }
 }
 - (void) stopTimerDelayTracking {
-    NSLog(@"----stopTimerDelayTracking");
+    //NSLog(@"----stopTimerDelayTracking");
     if (self.shareModel.timerDelayTracking) {
         [self.shareModel.timerDelayTracking invalidate];
         self.shareModel.timerDelayTracking = nil;
     }
 }
 - (void) stopTimerProcessTracking {
-    NSLog(@"----stopTimerProcessTracking");
+    //NSLog(@"----stopTimerProcessTracking");
     if (self.shareModel.timerProcessTracking) {
         [self.shareModel.timerProcessTracking invalidate];
         self.shareModel.timerProcessTracking = nil;
     }
 }
 - (void) endTimerIntervalGetLocationTracking {
-    NSLog(@"----endTimerIntervalGetLocationTracking");
+    //NSLog(@"----endTimerIntervalGetLocationTracking");
     //function excute new location
     [self updateLocationToServer];
 }
 - (void) endTimerIntervalUpdateLocationTracking {
-    NSLog(@"----endTimerIntervalUpdateLocationTracking");
+    //NSLog(@"----endTimerIntervalUpdateLocationTracking");
     //Get new location
     [self restartLocationUpdates];
 }
 - (void) endTimerDelayTracking {
-    NSLog(@"----endTimerDelayTracking");
+    //NSLog(@"----endTimerDelayTracking");
     //Start process tracking
     [self startTimerProcessTracking];
     
@@ -252,7 +252,7 @@
     [self startTimerIntervalUpdateLocationTracking];
 }
 - (void) endTimerProcessTracking {
-    NSLog(@"----endTimerProcessTracking");
+    //NSLog(@"----endTimerProcessTracking");
     //Stop process tracking
     [self stopTimerProcessTracking];
     

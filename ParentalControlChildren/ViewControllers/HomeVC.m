@@ -43,6 +43,8 @@
     }
     [delegateShare beginTrackingSaveLocations];
      */
+    
+    [delegateShare beginTrackingSaveLocations];
 }
 
 - (void) viewWillAppear:(BOOL)animated {

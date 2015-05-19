@@ -135,7 +135,7 @@
     [self saveContext];
     
     //Remove all data
-    //[Common removeFileLocalTrackingLocation];
+    [Common removeFileLocalTrackingLocation];
 }
 
 #pragma mark - NOTIFICATION DELEGATE
@@ -226,8 +226,7 @@
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *location = [locations lastObject];
-    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(location.coordinate.latitude),@(location.coordinate.longitude),@"killed"] forKeys:@[@"lat",@"long",@"type"]];
-    [Common writeObjToFileTrackingLocation:dicObj];
+    lastLocationAppDelegate = location.coordinate;
 }
 
 
@@ -420,6 +419,7 @@
 
 #pragma mark - TRACKING SAVE LOCATIONS HISTORY
 - (void) beginTrackingSaveLocations {
+    NSLog(@"------  beginTrackingSaveLocations");
     if (self.timerTrackingSaveLocations) {
         [self.timerTrackingSaveLocations invalidate];
         self.timerTrackingSaveLocations = nil;
@@ -442,6 +442,7 @@
 }
 
 - (void) restartTrackingSaveLocationsMoving {
+    NSLog(@"------  restartTrackingSaveLocationsMoving");
     if (self.timerRestartTrackingSaveLocationsMoving) {
         [self.timerRestartTrackingSaveLocationsMoving invalidate];
         self.timerRestartTrackingSaveLocationsMoving = nil;
@@ -454,6 +455,7 @@
 }
 
 - (void) callWSAddNewLocation:(CLLocationCoordinate2D) newPoint {
+    NSLog(@"------  callWSAddNewLocation");
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
@@ -490,6 +492,7 @@
 }
 
 - (void) callWSAddOldLocation:(NSMutableArray *) arrPoints {
+    NSLog(@"------  callWSAddOldLocation");
     NSString *strLats = @"";
     NSString *strLongs = @"";
     strLats = [Common returnStringArrayLat:arrPoints];
@@ -518,17 +521,22 @@
 }
 
 - (void) savePointToLocal:(CLLocationCoordinate2D) localPoint {
+    NSLog(@"------  savePointToLocal");
     //Write location to file
     NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(localPoint.latitude),@(localPoint.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
     [Common writeObjToFileTrackingLocation:dicObj];
 }
 
 - (void) endTimerTrackingSaveLocations {
+    NSLog(@"------  endTimerTrackingSaveLocations");
     [self callWSAddNewLocation:lastLocationAppDelegate];
 }
 
 - (void) endTimerTrackingSaveLocationsMoving {
+    NSLog(@"------  endTimerTrackingSaveLocationsMoving");
     //Check tracking point is out side radius tracking moving
+    NSLog(@"Distance: %f", [Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate]);
+    
     if ([Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate] >= radiusTrackingSaveLocationMoving) {
         // IS out side
         //Call add new location to server
@@ -537,6 +545,7 @@
         //Restart process
         [self restartTrackingSaveLocationsMoving];
     } else {
+        NSLog(@"Distance little: %f", [Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate]);
         if ([Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate] > distanceCheckingFilter) {
             //Save to local
             [self savePointToLocal:lastLocationAppDelegate];
@@ -546,6 +555,7 @@
 }
 
 - (void) endTimerRestartTrackingSaveLocationsMoving {
+    NSLog(@"------  endTimerRestartTrackingSaveLocationsMoving");
     [self.timerRestartTrackingSaveLocationsMoving invalidate];
     self.timerRestartTrackingSaveLocationsMoving = nil;
     [self beginCheckingSafeArea];
