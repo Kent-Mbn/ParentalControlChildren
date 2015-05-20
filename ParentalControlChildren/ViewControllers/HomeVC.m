@@ -27,16 +27,14 @@
     _arrayForPolygon = [[NSMutableArray alloc] init];
     
     //Start system checking safe area
-
     AppDelegate *delegateShare = APP_DELEGATE;
-    /*
     if (delegateShare.timerTrackingSafeArea) {
         [delegateShare.timerTrackingSafeArea invalidate];
         delegateShare.timerTrackingSafeArea = nil;
     }
     [delegateShare beginCheckingSafeArea];
-     
     
+    /*
     if (delegateShare.timerTrackingSaveLocations) {
         [delegateShare.timerTrackingSaveLocations invalidate];
         delegateShare.timerTrackingSaveLocations = nil;
@@ -44,11 +42,11 @@
     [delegateShare beginTrackingSaveLocations];
      */
     
-    [delegateShare beginTrackingSaveLocations];
+    //[delegateShare beginTrackingSaveLocations];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    //[self callWSGetSafeArea];
+    [self callWSGetSafeArea];
 }
 
 #pragma mark - ACTION
@@ -116,7 +114,7 @@
     CLLocationCoordinate2D point = locationPoint.coordinate;
     
     //Get Address
-    [Common showLoadingViewGlobal:nil];
+    /*
     CLGeocoder *geocoder = [[CLGeocoder alloc] init];
     [geocoder reverseGeocodeLocation:locationPoint completionHandler:^(NSArray *placemarks, NSError *error) {
         [Common hideLoadingViewGlobal];
@@ -126,7 +124,7 @@
         NSLog(@"Array place mark: %@", placemarks);
         CLPlacemark *placemark = [placemarks objectAtIndex:0];
         
-        /*
+     
          NSLog(@"name: %@", placemark.name);
          NSLog(@"thoroughfare: %@", placemark.thoroughfare);
          NSLog(@"subThoroughfare: %@", placemark.subThoroughfare);
@@ -141,7 +139,7 @@
          
          NSLog(@"ocean: %@", placemark.ocean);
          NSLog(@"areasOfInterest: %@", placemark.areasOfInterest);
-         */
+     
         
         MKPointAnnotation *pointAnn = [[MKPointAnnotation alloc] init];
         pointAnn.coordinate = point;
@@ -149,16 +147,26 @@
         pointAnn.subtitle = placemark.name;
         [_mapView addAnnotation:pointAnn];
         
-        /*
-        MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(point, 1000, 1000);
-        [_mapView setRegion:[_mapView regionThatFits:region] animated:YES];
-         */
+     
+        //MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(point, 1000, 1000);
+        //[_mapView setRegion:[_mapView regionThatFits:region] animated:YES];
+     
          
         [_mapView selectAnnotation:pointAnn animated:YES];
         
         //Update current location to server
         //[self callWSUpdateHistoryLocation:point andAddress:placemark.name];
     }];
+*/
+    
+    
+    MKPointAnnotation *pointAnn = [[MKPointAnnotation alloc] init];
+    pointAnn.coordinate = point;
+    //pointAnn.title = @"Name";
+    //pointAnn.subtitle = placemark.name;
+    [_mapView addAnnotation:pointAnn];
+    
+    [_mapView selectAnnotation:pointAnn animated:YES];
 }
 
 -(void) addPinViewToMap:(CLLocationCoordinate2D) location {
@@ -208,11 +216,8 @@
 - (void) callWSGetSafeArea {
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
-    NSMutableDictionary *request_param = [@{
-                                            
-                                            } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
-    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@", URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
+    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {

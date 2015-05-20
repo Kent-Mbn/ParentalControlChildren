@@ -145,6 +145,7 @@
     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@">" withString:@""];
     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
     [Common updateDeviceToken:tokenStr];
+    [[UserDefault user] setToken_device:tokenStr];
     NSLog(@"Device Token Child App: %@", tokenStr);
 }
 
@@ -310,6 +311,9 @@
 
 #pragma mark - CHECKING SAFE AREA
 - (void) beginCheckingSafeArea {
+    //Begin for first call
+    [self updateSafeArea];
+    
     self.timerTrackingSafeArea = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
                                      target:self
                                    selector:@selector(endTimerCheckingSafeArea)
@@ -319,6 +323,9 @@
 
 - (void) endTimerCheckingSafeArea {
     [self updateSafeArea];
+}
+
+- (void) notifyToParent {
     if (typeSafeArea == radiusShape) {
         if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
             [self callPushNotification];
@@ -337,9 +344,11 @@
 }
 
 - (void) updateSafeArea {
+    NSLog(@"-----CALL updateSafeArea------");
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
+                                            
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
     [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -379,12 +388,15 @@
                 [[UserDefault user] setLongs:[Common returnStringArrayLong:arrLocations]];
                 _arrayForPolygon = arrLocations;
             }
+            
         } else {
             //Return error
         }
+        [self notifyToParent];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"Error: %@", error.description);
+        [self notifyToParent];
     }];
 }
 
@@ -396,10 +408,10 @@
     [Common showLoadingViewGlobal:nil];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
-                                            @"device_token":[UserDefault user].token_device,
+                                            @"device_token":@"37dea398f12c9d0de9dd84c954527321286fb41480e32f6e45dc313a0d8594d2",
                                             @"push_to":@"parent",
                                             @"message":MSS_PUSH_NOTI_OUT_SAFE_AREA,
-                                            @"pusher_id":[UserDefault user].child_id,
+                                            @"pusher_id":@"3",
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_PUSH_NOTIFICATION));
     [manager POST:URL_SERVER_API(API_PUSH_NOTIFICATION) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {

@@ -94,6 +94,7 @@
 }
 
 + (AFHTTPRequestOperationManager *)AFHTTPRequestOperationManagerReturn {
+    NSLog(@".......Call WS........");
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     //manager.requestSerializer = [AFJSONRequestSerializer serializer];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
