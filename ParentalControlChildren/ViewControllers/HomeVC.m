@@ -34,15 +34,11 @@
     }
     [delegateShare beginCheckingSafeArea];
     
-    /*
     if (delegateShare.timerTrackingSaveLocations) {
         [delegateShare.timerTrackingSaveLocations invalidate];
         delegateShare.timerTrackingSaveLocations = nil;
     }
     [delegateShare beginTrackingSaveLocations];
-     */
-    
-    //[delegateShare beginTrackingSaveLocations];
 }
 
 - (void) viewWillAppear:(BOOL)animated {

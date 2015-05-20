@@ -344,16 +344,15 @@
 }
 
 - (void) updateSafeArea {
-    NSLog(@"-----CALL updateSafeArea------");
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
                                             
                                             } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
+    //NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
     [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"response: %@", responseObject);
+        //NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
             NSArray *arrData = (NSArray *)responseObject;
             NSArray *arrSafeAreaData;
@@ -405,7 +404,7 @@
 }
 
 - (void) callPushNotification {
-    [Common showLoadingViewGlobal:nil];
+    [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
                                             @"device_token":@"37dea398f12c9d0de9dd84c954527321286fb41480e32f6e45dc313a0d8594d2",
@@ -423,7 +422,7 @@
             [Common showAlertView:APP_NAME message:MSS_PUSH_NOTI_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [Common hideLoadingViewGlobal];
+        [Common hideNetworkActivityIndicator];
         NSLog(@"Error: %@", error.description);
         [Common showAlertView:APP_NAME message:MSS_PUSH_NOTI_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
     }];
@@ -475,10 +474,10 @@
                                             @"longitude":@(newPoint.longitude),
                                             @"address":@"address",
                                             } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
-    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"3")));
+    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"response: %@", responseObject);
+        NSLog(@"++++ response Add New Location ++++: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
             //Continue to send local history to server
             NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
@@ -510,17 +509,19 @@
     strLats = [Common returnStringArrayLat:arrPoints];
     strLongs = [Common returnStringArrayLong:arrPoints];
     
+    //status_request: add time created at for each point. if (status_created = 0) created time += adjust_time
+    
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
                                             @"latitude":strLats,
                                             @"longitude":strLongs,
-                                            @"created_at":@([[NSDate date] timeIntervalSince1970]),
+                                            @"status_request":@"0",
                                             } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)));
-    [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"3")));
+    [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"response: %@", responseObject);
+        NSLog(@"++++ response OLD LOCATION ++++++: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
             //Remove all data in local
             [Common removeFileLocalTrackingLocation];
