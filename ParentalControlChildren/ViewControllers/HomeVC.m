@@ -47,20 +47,8 @@
 
 #pragma mark - ACTION
 - (IBAction)actionEmergency:(id)sender {
-    //[Common showAlertView:APP_NAME message:MSS_NOTICE_SEND_SMS delegate:self cancelButtonTitle:@"Cancel" arrayTitleOtherButtons:@[@"Yes"] tag:0];
-    if (typeSafeArea == radiusShape) {
-        if ([Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocation]) {
-            NSLog(@"Nam trong!");
-        } else {
-            NSLog(@"Nam ngoai!");
-        }
-    } else {
-        if ([Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocation]) {
-            NSLog(@"Nam trong!");
-        } else {
-            NSLog(@"Nam ngoai!");
-        }
-    }
+    AppDelegate *appDelegate = APP_DELEGATE;
+    [appDelegate callMessageVC];
 }
 
 - (IBAction)actionSettings:(id)sender {

@@ -24,6 +24,7 @@
 		D903E56F1AF9B9BE00760189 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D903E56E1AF9B9BE00760189 /* Images.xcassets */; };
 		D903E5721AF9B9BE00760189 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D903E5701AF9B9BE00760189 /* LaunchScreen.xib */; };
 		D903E57E1AF9B9BE00760189 /* ParentalControlChildrenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D903E57D1AF9B9BE00760189 /* ParentalControlChildrenTests.m */; };
+		D95912D11B0DB90D00F9D340 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D95912D01B0DB90D00F9D340 /* MessageUI.framework */; };
 		D98F6DDC1B00A6EA00F1D855 /* ic_phone_number.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DD81B00A6EA00F1D855 /* ic_phone_number.png */; };
 		D98F6DDD1B00A6EA00F1D855 /* ic_phone_number@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DD91B00A6EA00F1D855 /* ic_phone_number@2x.png */; };
 		D98F6DDE1B00A6EA00F1D855 /* ic_set_area.png in Resources */ = {isa = PBXBuildFile; fileRef = D98F6DDA1B00A6EA00F1D855 /* ic_set_area.png */; };
@@ -126,6 +127,7 @@
 		D903E57C1AF9B9BE00760189 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D903E57D1AF9B9BE00760189 /* ParentalControlChildrenTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParentalControlChildrenTests.m; sourceTree = "<group>"; };
 		D9503FA11B01DC2B00252DD1 /* APIService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIService.h; sourceTree = "<group>"; };
+		D95912D01B0DB90D00F9D340 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		D98F6DD81B00A6EA00F1D855 /* ic_phone_number.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_phone_number.png; sourceTree = "<group>"; };
 		D98F6DD91B00A6EA00F1D855 /* ic_phone_number@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ic_phone_number@2x.png"; sourceTree = "<group>"; };
 		D98F6DDA1B00A6EA00F1D855 /* ic_set_area.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ic_set_area.png; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D95912D11B0DB90D00F9D340 /* MessageUI.framework in Frameworks */,
 				D9CDF2F71B059D6400C3C31C /* UIKit.framework in Frameworks */,
 				D9DDEEA11AFCAD4100848B57 /* MapKit.framework in Frameworks */,
 				42C7EEF58E1E7379BE9F134A /* libPods.a in Frameworks */,
@@ -224,6 +227,7 @@
 		C85C276E02C5A0CED6F28DD0 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D95912D01B0DB90D00F9D340 /* MessageUI.framework */,
 				D9CDF2F61B059D6400C3C31C /* UIKit.framework */,
 				D9DDEEA01AFCAD4100848B57 /* MapKit.framework */,
 				820C6FAE71881C9CC6E487FC /* libPods.a */,

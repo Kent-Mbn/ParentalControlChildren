@@ -400,7 +400,48 @@
 }
 
 - (void) callMessageVC {
+    if(![MFMessageComposeViewController canSendText]) {
+        UIAlertView *alV = [[UIAlertView alloc] initWithTitle:@"SMS" message:@"Your device doesn't support SMS!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alV show];
+        return;
+    }
+    NSArray *arrPhoneNumbers = [[NSArray alloc] initWithArray:[[UserDefault user].arrPhoneNumbers componentsSeparatedByString:@"*"]];
+    NSLog(@"arr phone number: %@", arrPhoneNumbers);
     
+    if ([arrPhoneNumbers count] > 0) {
+        NSString *messageString = @"Text send SMS!";
+        
+        MFMessageComposeViewController *messController = [[MFMessageComposeViewController alloc] init];
+        messController.messageComposeDelegate = self;
+        [messController setRecipients:arrPhoneNumbers];
+        [messController setBody:messageString];
+        
+        [self.window.rootViewController presentViewController:messController animated:YES completion:^{
+            
+        }];
+    } else {
+        UIAlertView *alV = [[UIAlertView alloc] initWithTitle:@"SMS" message:@"No phone number!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+        [alV show];
+        return;
+    }
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result {
+    switch (result) {
+        case MessageComposeResultCancelled:
+            break;
+        case MessageComposeResultFailed:
+        {
+            UIAlertView *alertV = [[UIAlertView alloc] initWithTitle:@"SMS" message:@"Send failed!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+            [alertV show];
+            break;
+        }
+        case MessageComposeResultSent:
+            break;
+        default:
+            break;
+    }
+    [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void) callPushNotification {

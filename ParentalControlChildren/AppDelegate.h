@@ -16,13 +16,14 @@
 #import "APIService.h"
 #import <CoreLocation/CoreLocation.h>
 #import "LocationTracker.h"
+#import <MessageUI/MessageUI.h>
 
 typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
     radiusShape = 0,
     polygonShape = 1,
 };
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate, CLLocationManagerDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate, UIAlertViewDelegate, CLLocationManagerDelegate, MFMessageComposeViewControllerDelegate> {
     NSString *strPusherId;
     NSString *strChildId;
     
@@ -71,6 +72,9 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
 
 //Tracking save locations
 - (void) beginTrackingSaveLocations;
+
+//Call message controller
+- (void) callMessageVC;
 
 @end
 
