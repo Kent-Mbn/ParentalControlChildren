@@ -88,6 +88,7 @@
     
     cell.lblName.text = obj.strName;
     cell.lblPhoneNumber.text = obj.strMobile;
+    [cell.btCheckUnCheck addTarget:self action:@selector(actionCheckUncheck:) forControlEvents:UIControlEventTouchUpInside];
     
     if (obj.dataImage != nil) {
         cell.imgAvatar.image = [UIImage imageWithData:obj.dataImage];
@@ -153,12 +154,17 @@
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
     NSArray *allPeoples = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
     
+    NSInteger Id;
     NSString *fullName;
     NSString *phoneNumber;
     NSData *dataAvatar;
     
     for (id record in allPeoples) {
         ABRecordRef people = (__bridge ABRecordRef)record;
+        
+        //Get id
+        NSNumber *recordId = [NSNumber numberWithInteger:ABRecordGetRecordID(people)];
+        Id = recordId.intValue;
         
         //Get name
         CFStringRef firstName, lastName;
@@ -194,7 +200,7 @@
         } else dataAvatar = nil;
         
         //Add to array contact
-        PersonContactObj *obj = [[PersonContactObj alloc] initWith:fullName andPhoneNumber:phoneNumber andDataImage:dataAvatar];
+        PersonContactObj *obj = [[PersonContactObj alloc] initWith:Id andName:fullName andPhoneNumber:phoneNumber andDataImage:dataAvatar];
         if (phoneNumber.length > 0) {
             [_arrContacts addObject:obj];
         }
@@ -219,4 +225,9 @@
 - (IBAction)actionDone:(id)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
+
+- (void) actionCheckUncheck:(id) sender {
+    
+}
+
 @end

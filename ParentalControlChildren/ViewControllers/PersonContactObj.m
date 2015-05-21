@@ -10,8 +10,9 @@
 
 @implementation PersonContactObj
 
-- (id) initWith:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg {
+- (id) initWith:(NSInteger)Id andName:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg {
     if (self = [super init]) {
+        self.recordId = Id;
         self.strName = strName;
         self.strMobile = strPhoneNumber;
         self.dataImage = dataImg;
