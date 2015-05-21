@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblName;
 @property (weak, nonatomic) IBOutlet UILabel *lblPhoneNumber;
 @property (weak, nonatomic) IBOutlet UIButton *btCheckUnCheck;
+@property (weak, nonatomic) IBOutlet UIButton *btCheckUncheckSearch;
 
 @end

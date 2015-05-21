@@ -18,13 +18,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _arrContacts = [[NSMutableArray alloc] init];
-    _searchResults = [[NSArray alloc] init];
+    _searchResults = [[NSMutableArray alloc] init];
+    _arrIdRecords = [[NSArray alloc] init];
     _viewTopBar.backgroundColor = masterColor;
     self.searchDisplayController.searchResultsTableView.backgroundColor = [UIColor blackColor];
 }
 
+- (void) viewDidAppear:(BOOL)animated {
+    [self getContactAndReload];
+}
+
 - (void) viewWillAppear:(BOOL)animated {
-    [self getAllPeopleFromContactList];
+    [Common showLoadingViewGlobal:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -43,9 +48,29 @@
 */
 
 #pragma mark - FUNCTION
+
+- (void) getContactAndReload {
+    _arrIdRecords = [[UserDefault user].arrContactIds componentsSeparatedByString:@"*"];
+    NSLog(@"String ids: %@", [UserDefault user].arrContactIds);
+    NSLog(@"Array userdefault: %@", _arrIdRecords);
+    [self getAllPeopleFromContactList];
+}
+
 - (void) filterContentForSearchText:(NSString *)searchText scope:(NSString *)scope {
     NSPredicate *resultPredicate = [NSPredicate predicateWithFormat:@"strName contains[c] %@", searchText];
-    _searchResults = [_arrContacts filteredArrayUsingPredicate:resultPredicate];
+    _searchResults.array = [_arrContacts filteredArrayUsingPredicate:resultPredicate];
+}
+
+- (void) addContactToUserDefault:(NSInteger)Id andPhoneNumber:(NSString *)strPhone {
+    NSArray *arrIds = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%ld",(long)Id], nil];
+    NSArray *arrPhones = [NSArray arrayWithObjects:strPhone, nil];
+    [Common addContactToArrayUserDefault:arrIds andArrPhoneNumbers:arrPhones];
+}
+
+- (void) removeContactToUserDefault:(NSInteger)Id andPhoneNumber:(NSString *)strPhone {
+    NSArray *arrIds = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%ld",(long)Id], nil];
+    NSArray *arrPhones = [NSArray arrayWithObjects:strPhone, nil];
+    [Common removeContactToArrayUserDefault:arrIds andArrPhoneNumbers:arrPhones];
 }
 
 
@@ -82,13 +107,27 @@
     
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         obj = [_searchResults objectAtIndex:indexPath.row];
+        cell.btCheckUnCheck.hidden = YES;
+        cell.btCheckUncheckSearch.hidden = NO;
     } else {
         obj = [_arrContacts objectAtIndex:indexPath.row];
+        cell.btCheckUnCheck.hidden = NO;
+        cell.btCheckUncheckSearch.hidden = YES;
     }
     
     cell.lblName.text = obj.strName;
     cell.lblPhoneNumber.text = obj.strMobile;
+    if (obj.isSaved) {
+        [cell.btCheckUnCheck setImage:[UIImage imageNamed:@"box-check.png"] forState:UIControlStateNormal];
+        [cell.btCheckUncheckSearch setImage:[UIImage imageNamed:@"box-check.png"] forState:UIControlStateNormal];
+    } else {
+        [cell.btCheckUnCheck setImage:[UIImage imageNamed:@"box-uncheck.png"] forState:UIControlStateNormal];
+        [cell.btCheckUncheckSearch setImage:[UIImage imageNamed:@"box-uncheck.png"] forState:UIControlStateNormal];
+    }
     [cell.btCheckUnCheck addTarget:self action:@selector(actionCheckUncheck:) forControlEvents:UIControlEventTouchUpInside];
+    [cell.btCheckUncheckSearch addTarget:self action:@selector(actionCheckUncheckSearch:) forControlEvents:UIControlEventTouchUpInside];
+    cell.btCheckUnCheck.tag = indexPath.row;
+    cell.btCheckUncheckSearch.tag = indexPath.row;
     
     if (obj.dataImage != nil) {
         cell.imgAvatar.image = [UIImage imageWithData:obj.dataImage];
@@ -151,20 +190,33 @@
 }
 
 - (void) getInforOfAllPeopleFromContactList {
+    if (_arrContacts) {
+        [_arrContacts removeAllObjects];
+    }
+    
     ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, nil);
     NSArray *allPeoples = (__bridge NSArray *)ABAddressBookCopyArrayOfAllPeople(addressBookRef);
     
     NSInteger Id;
     NSString *fullName;
     NSString *phoneNumber;
+    BOOL isSave = NO;
     NSData *dataAvatar;
     
     for (id record in allPeoples) {
+        isSave = NO;
+        
         ABRecordRef people = (__bridge ABRecordRef)record;
         
         //Get id
         NSNumber *recordId = [NSNumber numberWithInteger:ABRecordGetRecordID(people)];
         Id = recordId.intValue;
+        
+        for (int i = 0; i < [_arrIdRecords count]; i++) {
+            if (Id == [[_arrIdRecords objectAtIndex:i] intValue]) {
+                isSave = YES;
+            }
+        }
         
         //Get name
         CFStringRef firstName, lastName;
@@ -200,11 +252,12 @@
         } else dataAvatar = nil;
         
         //Add to array contact
-        PersonContactObj *obj = [[PersonContactObj alloc] initWith:Id andName:fullName andPhoneNumber:phoneNumber andDataImage:dataAvatar];
+        PersonContactObj *obj = [[PersonContactObj alloc] initWith:Id andName:fullName andPhoneNumber:phoneNumber andDataImage:dataAvatar andIsSaved:isSave];
         if (phoneNumber.length > 0) {
             [_arrContacts addObject:obj];
         }
     }
+    [Common hideLoadingViewGlobal];
     if ([_arrContacts count] > 0) {
         [_tblView reloadData];
     }
@@ -214,6 +267,10 @@
 -(BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
     [self filterContentForSearchText:searchString scope:[[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
     return YES;
+}
+
+- (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar {
+    [self getContactAndReload];
 }
 
 #pragma mark - ACTION
@@ -226,8 +283,48 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void) actionCheckUncheck:(id) sender {
+- (void) actionCheckUncheck:(UIButton *) bt {
+    int index = (int)bt.tag;
+    //Get object at index
+    PersonContactObj *obj;
     
+    obj = [_arrContacts objectAtIndex:index];
+    
+    
+    if (obj.isSaved) {
+        //Un-check
+        obj.isSaved = NO;
+        [self removeContactToUserDefault:obj.recordId andPhoneNumber:obj.strMobile];
+    } else {
+        //Check
+        obj.isSaved = YES;
+        [self addContactToUserDefault:obj.recordId andPhoneNumber:obj.strMobile];
+    }
+    
+    [_arrContacts replaceObjectAtIndex:index withObject:obj];
+    [_tblView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForItem:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+}
+
+- (void) actionCheckUncheckSearch:(UIButton *) bt {
+    int index = (int)bt.tag;
+    //Get object at index
+    PersonContactObj *obj;
+    
+    obj = [_searchResults objectAtIndex:index];
+    
+    if (obj.isSaved) {
+        //Un-check
+        obj.isSaved = NO;
+        [self removeContactToUserDefault:obj.recordId andPhoneNumber:obj.strMobile];
+    } else {
+        //Check
+        obj.isSaved = YES;
+        [self addContactToUserDefault:obj.recordId andPhoneNumber:obj.strMobile];
+    }
+    
+    [_searchResults replaceObjectAtIndex:index withObject:obj];
+    [self.searchDisplayController.searchResultsTableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForItem:index inSection:0]] withRowAnimation:UITableViewRowAnimationFade];
+
 }
 
 @end

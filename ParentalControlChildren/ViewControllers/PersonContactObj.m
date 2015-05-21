@@ -10,12 +10,13 @@
 
 @implementation PersonContactObj
 
-- (id) initWith:(NSInteger)Id andName:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg {
+- (id) initWith:(NSInteger) Id andName:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg andIsSaved:(BOOL) isSaved {
     if (self = [super init]) {
         self.recordId = Id;
         self.strName = strName;
         self.strMobile = strPhoneNumber;
         self.dataImage = dataImg;
+        self.isSaved = isSaved;
     }
     return self;
 }

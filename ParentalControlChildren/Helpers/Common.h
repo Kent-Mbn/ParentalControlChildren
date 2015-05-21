@@ -13,6 +13,7 @@
 #import "AFNetworking.h"
 #import "UIKit+AFNetworking.h"
 #import "Define.h"
+#import "UserDefault.h"
 
 @interface Common : NSObject
 
@@ -43,6 +44,9 @@
 + (NSString *) returnStringArrayLat:(NSMutableArray *) arrData;
 + (NSString *) returnStringArrayLong:(NSMutableArray *) arrData;
 + (NSArray *) returnArrayLocations:(NSString *) strLats andLongs:(NSString *)strLongs;
+
++ (void) addContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones;
++ (void) removeContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones;
 
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 + (BOOL) checkPointInsidePolygon:(NSMutableArray *) arrPonits andCheckPoint:(CLLocationCoordinate2D) checkPoint;

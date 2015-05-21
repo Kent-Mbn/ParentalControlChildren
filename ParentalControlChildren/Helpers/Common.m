@@ -205,6 +205,72 @@
     return nil;
 }
 
++ (void) addContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones {
+    
+    //Read string Ids and PhoneNumbers
+    NSString *strIds;
+    NSString *strPhoneNumbers;
+    strIds = [UserDefault user].arrContactIds;
+    strPhoneNumbers = [UserDefault user].arrPhoneNumbers;
+    
+    //Convert userdefault to NSMutableArray
+    NSMutableArray *arrUsIds = [[NSMutableArray alloc] initWithArray:[strIds componentsSeparatedByString:@"*"]];
+    NSMutableArray *arrUsPhones = [[NSMutableArray alloc] initWithArray:[strPhoneNumbers componentsSeparatedByString:@"*"]];
+    
+    //Convert prameter to NSMutableArray
+    NSMutableArray *arrPrIds = [NSMutableArray arrayWithArray:arrIds];
+    NSMutableArray *arrPrPhones = [NSMutableArray arrayWithArray:arrPhones];
+    
+    for (int i = 0; i < [arrPrIds count]; i++) {
+        if ([arrUsIds count] > 0) {
+            BOOL isAdd = YES;
+            for (int l = 0; l < [arrUsIds count]; l++) {
+                if ([[arrUsIds objectAtIndex:l] isEqualToString:[arrPrIds objectAtIndex:i]]) {
+                    isAdd = NO;
+                }
+            }
+            if (isAdd) {
+                [arrUsIds addObject:[arrPrIds objectAtIndex:i]];
+                [arrUsPhones addObject:[arrPrPhones objectAtIndex:i]];
+            }
+        } else {
+            [arrUsIds addObject:[arrPrIds objectAtIndex:i]];
+            [arrUsPhones addObject:[arrPrPhones objectAtIndex:i]];
+        }
+    }
+    
+    //Save to user default again
+    [[UserDefault user] setArrContactIds:[arrUsIds componentsJoinedByString:@"*"]];
+    [[UserDefault user] setArrPhoneNumbers:[arrUsPhones componentsJoinedByString:@"*"]];
+}
+
++ (void) removeContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones {
+    //Read string Ids and PhoneNumbers
+    NSString *strIds;
+    NSString *strPhoneNumbers;
+    strIds = [UserDefault user].arrContactIds;
+    strPhoneNumbers = [UserDefault user].arrPhoneNumbers;
+    
+    //Format to nsmutable array
+    if (strIds.length > 0 && strPhoneNumbers.length > 0) {
+        NSMutableArray *arrMuIds = [[NSMutableArray alloc] initWithArray:[strIds componentsSeparatedByString:@"*"]];
+        NSMutableArray *arrMuPhones = [[NSMutableArray alloc] initWithArray:[strPhoneNumbers componentsSeparatedByString:@"*"]];
+        for (int i = 0; i < [arrIds count]; i++) {
+            for (int l = 0; l < [arrMuIds count]; l++) {
+                if ([[arrIds objectAtIndex:i] isEqualToString:[arrMuIds objectAtIndex:l]]) {
+                    //Remove Id and Phone Number out of arrMuIds and arrMuPhones
+                    [arrMuIds removeObjectAtIndex:l];
+                    [arrMuPhones removeObjectAtIndex:l];
+                }
+            }
+        }
+        
+        //Convert array to string again and save to userdefault
+        [[UserDefault user] setArrContactIds:[arrMuIds componentsJoinedByString:@"*"]];
+        [[UserDefault user] setArrPhoneNumbers:[arrMuPhones componentsJoinedByString:@"*"]];
+    }
+}
+
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 
 /*

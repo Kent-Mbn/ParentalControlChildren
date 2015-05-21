@@ -12,12 +12,15 @@
 #import "Define.h"
 #import "PersonContactObj.h"
 #import "AddPhoneNumberCell.h"
+#import "UserDefault.h"
 
 @interface AddPhoneNumberVC : UIViewController<UITableViewDelegate, UITableViewDataSource> {
 
 }
+@property(nonatomic, strong) NSArray *arrIdRecords;
+
 @property(nonatomic, strong) NSMutableArray *arrContacts;
-@property(nonatomic, strong) NSArray *searchResults;
+@property(nonatomic, strong) NSMutableArray *searchResults;
 
 @property (weak, nonatomic) IBOutlet UITableView *tblView;
 - (IBAction)actionBack:(id)sender;

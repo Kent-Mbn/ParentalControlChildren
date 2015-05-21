@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4Z8-FL-hsd">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="4Z8-FL-hsd">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <scenes>
         <!--RegisterVC-->
@@ -249,8 +249,8 @@
                     <connections>
                         <outlet property="tblView" destination="nbi-A4-1ye" id="mO2-uE-moK"/>
                         <outlet property="viewTopBar" destination="LvF-WE-LIe" id="7TB-XN-zb8"/>
-                        <segue destination="ttz-aK-DbN" kind="push" identifier="segueToPhoneNumberList" id="Bpx-Xy-Gsx"/>
                         <segue destination="h46-bX-pWz" kind="push" identifier="segueToEditSMS" id="c5j-Nl-Thk"/>
+                        <segue destination="w32-v7-hOF" kind="push" identifier="sugueToAddContact" id="UgH-AH-asr"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I2R-34-95a" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -294,7 +294,6 @@
                                         </state>
                                         <connections>
                                             <action selector="actionAddNumberPhone:" destination="ttz-aK-DbN" eventType="touchUpInside" id="b9f-7W-eYj"/>
-                                            <segue destination="w32-v7-hOF" kind="push" id="JpN-z4-y5K"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -380,7 +379,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="als-hZ-Yph" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1940" y="236"/>
+            <point key="canvasLocation" x="2362" y="957"/>
         </scene>
         <!--Add Phone NumberVC-->
         <scene sceneID="Ylq-5r-ZY0">
@@ -409,18 +408,6 @@
                                         </state>
                                         <connections>
                                             <action selector="actionBack:" destination="w32-v7-hOF" eventType="touchUpInside" id="9YF-gr-4iP"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="CGS-Ke-Try">
-                                        <rect key="frame" x="256" y="27" width="52" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
-                                        <state key="normal" title="Done">
-                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <connections>
-                                            <action selector="actionDone:" destination="w32-v7-hOF" eventType="touchUpInside" id="PD1-v7-yPm"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -463,11 +450,19 @@
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                 </button>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="YU2-VX-XD9">
+                                                    <rect key="frame" x="279" y="28" width="30" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <state key="normal" image="box-uncheck.png">
+                                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                </button>
                                             </subviews>
                                             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                         </tableViewCellContentView>
                                         <connections>
                                             <outlet property="btCheckUnCheck" destination="kAY-P0-mcv" id="bJk-0k-Z47"/>
+                                            <outlet property="btCheckUncheckSearch" destination="YU2-VX-XD9" id="Gnd-Cs-bUD"/>
                                             <outlet property="imgAvatar" destination="9OK-Ux-Fkx" id="t44-Ur-ZEz"/>
                                             <outlet property="lblName" destination="j3V-BE-JEx" id="Nam-8p-9fi"/>
                                             <outlet property="lblPhoneNumber" destination="LS4-BW-amb" id="MvN-2R-YUS"/>
@@ -508,7 +503,7 @@
                     </connections>
                 </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="2335" y="236"/>
+            <point key="canvasLocation" x="1989" y="236"/>
         </scene>
         <!--EditSMS MessageVC-->
         <scene sceneID="vcD-Kd-8ka">

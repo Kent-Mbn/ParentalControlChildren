@@ -31,6 +31,8 @@ static UserDefault *globalObject;
         self.lats = [aDecoder decodeObjectForKey:@"lats"];
         self.longs = [aDecoder decodeObjectForKey:@"longs"];
         self.radiusCircle = [aDecoder decodeObjectForKey:@"radiusCircle"];
+        self.arrContactIds = [aDecoder decodeObjectForKey:@"arrContactIds"];
+        self.arrPhoneNumbers = [aDecoder decodeObjectForKey:@"arrPhoneNumbers"];
     }
     
     return self;
@@ -46,6 +48,8 @@ static UserDefault *globalObject;
     [aCoder encodeObject:self.lats forKey:@"lats"];
     [aCoder encodeObject:self.longs forKey:@"longs"];
     [aCoder encodeObject:self.radiusCircle forKey:@"radiusCircle"];
+    [aCoder encodeObject:self.arrContactIds forKey:@"arrContactIds"];
+    [aCoder encodeObject:self.arrPhoneNumbers forKey:@"arrPhoneNumbers"];
 }
 
 - (void) updateUserDefault
@@ -65,6 +69,8 @@ static UserDefault *globalObject;
     user.lats = nil;
     user.longs = nil;
     user.radiusCircle = nil;
+    user.arrContactIds = nil;
+    user.arrPhoneNumbers = nil;
     [user update];
 }
 

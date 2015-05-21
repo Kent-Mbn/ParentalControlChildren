@@ -10,10 +10,11 @@
 
 @interface PersonContactObj : NSObject
 
-- (id) initWith:(NSInteger) Id andName:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg;
+- (id) initWith:(NSInteger) Id andName:(NSString *) strName andPhoneNumber:(NSString *)strPhoneNumber andDataImage:(NSData *) dataImg andIsSaved:(BOOL) isSaved;
 @property(nonatomic) NSInteger recordId;
 @property(nonatomic, strong) NSString *strName;
 @property(nonatomic, strong) NSString *strMobile;
 @property(nonatomic, strong) NSData *dataImage;
+@property(nonatomic) BOOL isSaved;
 
 @end

@@ -18,6 +18,8 @@
 @property(nonatomic,strong) NSString *lats;
 @property(nonatomic,strong) NSString *longs;
 @property(nonatomic,strong) NSString *radiusCircle;
+@property(nonatomic,strong) NSString *arrContactIds;
+@property(nonatomic,strong) NSString *arrPhoneNumbers;
 
 + (UserDefault *) user;
 - (void) update;
