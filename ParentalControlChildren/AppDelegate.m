@@ -409,7 +409,10 @@
     NSLog(@"arr phone number: %@", arrPhoneNumbers);
     
     if ([arrPhoneNumbers count] > 0) {
-        NSString *messageString = @"Text send SMS!";
+        NSString *messageString = [UserDefault user].content_mss;
+        if (messageString.length == 0) {
+            messageString = @"Out of safeare!";
+        }
         
         MFMessageComposeViewController *messController = [[MFMessageComposeViewController alloc] init];
         messController.messageComposeDelegate = self;
