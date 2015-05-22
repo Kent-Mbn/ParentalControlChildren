@@ -227,7 +227,10 @@
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     CLLocation *location = [locations lastObject];
-    lastLocationAppDelegate = location.coordinate;
+    
+    NSLog(@"Killed app -> send location to server");
+    //Call to server with new location, if fail save to local.
+    [self callWSAddNewLocation:location.coordinate];
 }
 
 
@@ -385,18 +388,51 @@
                 }
                 [[UserDefault user] setLats:[Common returnStringArrayLat:arrLocations]];
                 [[UserDefault user] setLongs:[Common returnStringArrayLong:arrLocations]];
+                
                 _arrayForPolygon = arrLocations;
             }
-            
+            [self notifyToParent];
         } else {
-            //Return error
+            //Can not get safe area
+            [self updateSafeAreaOffline];
         }
-        [self notifyToParent];
+        
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"Error: %@", error.description);
-        [self notifyToParent];
+        [self updateSafeAreaOffline];
     }];
+}
+
+- (void) updateSafeAreaOffline {
+    //Get data from userdefault.
+    NSString *strRadius = [UserDefault user].radiusCircle;
+    NSString *strLats = [UserDefault user].lats;
+    NSString *strLongs = [UserDefault user].longs;
+    
+    //Check lat long length > 0, check radius of circle, if = 0 -> polygon else is circle.
+    if (strLats.length > 0 && strLongs.length > 0) {
+        if (strRadius == nil || [strRadius isEqualToString:@"0"]) {
+            //polygon
+            NSArray *arrSafeAreaDataLats = [strLats componentsSeparatedByString:@";"];
+            NSArray *arrSafeAreaDataLongs = [strLongs componentsSeparatedByString:@";"];
+            typeSafeArea = polygonShape;
+            NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+            for (int i = 0; i < [arrSafeAreaDataLats count]; i++) {
+                CLLocation *locationPoint = [[CLLocation alloc] initWithLatitude:[[arrSafeAreaDataLats objectAtIndex:i] doubleValue] longitude:[[arrSafeAreaDataLongs objectAtIndex:i] doubleValue]];
+                [arrLocations addObject:locationPoint];
+            }
+            _arrayForPolygon = arrLocations;
+        } else {
+            //circle
+            typeSafeArea = radiusShape;
+            centerPointCircle = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", strLats, strLongs]];
+            radiusCircle = [strRadius intValue];
+        }
+    }
+    
+    //call notify to parent.
+    [self notifyToParent];
 }
 
 - (void) callMessageVC {
