@@ -90,9 +90,9 @@
 
 -(void) changeStatusOfButtonMapType {
     if (typeMap == NSTypeMapStandard) {
-        [_btTypeMap setBackgroundImage:[UIImage imageNamed:@"map_standard.png"] forState:UIControlStateNormal];
-    } else {
         [_btTypeMap setBackgroundImage:[UIImage imageNamed:@"bt_map_satellite.png"] forState:UIControlStateNormal];
+    } else {
+        [_btTypeMap setBackgroundImage:[UIImage imageNamed:@"map_standard.png"] forState:UIControlStateNormal];
     }
 }
 
