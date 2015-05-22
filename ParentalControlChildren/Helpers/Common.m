@@ -319,4 +319,40 @@
     return NO;
 }
 
+#pragma mark - Algorthim calculate area of polygon and circle
++ (double) areaOfTriangle:(CLLocationCoordinate2D)firstPoint andSecondPoint:(CLLocationCoordinate2D)secondPoint andThirdPoint:(CLLocationCoordinate2D)thirdPoint {
+    double areaReturn = 0.0f;
+    
+    /* Herong: S=sqrt(p(p-a)(p-b)(p-c)) */
+    double a = [self calDistanceTwoCoordinate:firstPoint andSecondPoint:secondPoint];
+    double b = [self calDistanceTwoCoordinate:secondPoint andSecondPoint:thirdPoint];
+    double c = [self calDistanceTwoCoordinate:firstPoint andSecondPoint:thirdPoint];
+    
+    // 1/2 perimeter
+    double p = (a + b + c)/2;
+    
+    //Cal area
+    areaReturn = sqrtf(p * (p - a) * (p - b) * (p - c));
+    
+    return areaReturn;
+}
+
++ (double) areaOfPolygon:(NSMutableArray *) arrPoints {
+    double areaReturn = 0.0f;
+    
+    // Area is summury all of area of triangle
+    int count = [arrPoints count] - 2;
+    if (count >= 1) {
+        for (int i = 0; i < count; i++) {
+            CLLocation *firstPoint = [arrPoints objectAtIndex:0];
+            CLLocation *secondPoint = [arrPoints objectAtIndex:(i+1)];
+            CLLocation *thirdPoint = [arrPoints objectAtIndex:(i+2)];
+            
+            areaReturn += [self areaOfTriangle:firstPoint.coordinate andSecondPoint:secondPoint.coordinate andThirdPoint:thirdPoint.coordinate];
+        }
+    }
+    
+    return areaReturn;
+}
+
 @end

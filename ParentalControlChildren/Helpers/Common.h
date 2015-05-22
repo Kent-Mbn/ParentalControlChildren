@@ -54,4 +54,5 @@
 + (BOOL) checkPointInsideCircle:(float)radiusCircle andCenterPoint:(CLLocationCoordinate2D) centerPoint andCheckPoint:(CLLocationCoordinate2D) checkPoint;
 
 
+
 @end
