@@ -328,7 +328,7 @@
 
 - (void) startTimerUpdateSafeArea {
     [self stopTimerUpdateSafeArea];
-    _timerUpdateSafeArea = [NSTimer timerWithTimeInterval:timeUpdateSafeAreaHome target:self selector:@selector(endTimerUpdateSafeArea) userInfo:nil repeats:YES];
+    _timerUpdateSafeArea = [NSTimer scheduledTimerWithTimeInterval:timeUpdateSafeAreaHome target:self selector:@selector(endTimerUpdateSafeArea) userInfo:nil repeats:YES];
 }
 
 - (void) endTimerUpdateSafeArea {
