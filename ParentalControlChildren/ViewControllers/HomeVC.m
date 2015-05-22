@@ -242,7 +242,7 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"Error: %@", error.description);
+        NSLog(@"Error Safe Area At Home: %@", error.description);
     }];
 }
 

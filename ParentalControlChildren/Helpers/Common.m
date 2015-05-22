@@ -271,6 +271,13 @@
     }
 }
 
++ (BOOL) isValidString:(NSString *) strCheck {
+    if (strCheck.length > 0 && ![strCheck isEqual:[NSNull null]] && ![strCheck isEqualToString:@"(null)"]) {
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 
 /*

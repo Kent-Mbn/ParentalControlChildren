@@ -329,18 +329,20 @@
 }
 
 - (void) notifyToParent {
-    if (typeSafeArea == radiusShape) {
-        if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
-            [self callPushNotification];
-            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-                [self callMessageVC];
+    if (lastLocationAppDelegate.latitude != 0 && lastLocationAppDelegate.longitude != 0) {
+        if (typeSafeArea == radiusShape) {
+            if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
+                [self callPushNotification];
+                if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                    [self callMessageVC];
+                }
             }
-        }
-    } else {
-        if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
-            [self callPushNotification];
-            if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-                [self callMessageVC];
+        } else {
+            if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
+                [self callPushNotification];
+                if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                    [self callMessageVC];
+                }
             }
         }
     }
@@ -373,6 +375,8 @@
                 [[UserDefault user] setLongs:objPoint[@"longitude"]];
                 [[UserDefault user] setRadiusCircle:objPoint[@"radius"]];
                 
+                NSLog(@"Lats: %@", [UserDefault user].lats);
+                
                 centerPointCircle = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", objPoint[@"latitude"], objPoint[@"longitude"]]];
                 radiusCircle = [objPoint[@"radius"] intValue];
                 
@@ -399,19 +403,26 @@
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"Error: %@", error.description);
+        NSLog(@"Error Update SafeArea: %@", error.description);
         [self updateSafeAreaOffline];
     }];
 }
 
 - (void) updateSafeAreaOffline {
     //Get data from userdefault.
-    NSString *strRadius = [UserDefault user].radiusCircle;
-    NSString *strLats = [UserDefault user].lats;
-    NSString *strLongs = [UserDefault user].longs;
+    NSString *strRadius;
+    NSString *strLats;
+    NSString *strLongs;
+    
+    NSLog(@"radiusCircle: %@", [UserDefault user].radiusCircle);
+    
+    strRadius = [NSString stringWithFormat:@"%@", [UserDefault user].radiusCircle];
+    strLats = [NSString stringWithFormat:@"%@", [UserDefault user].lats];
+    strLongs = [NSString stringWithFormat:@"%@", [UserDefault user].longs];
     
     //Check lat long length > 0, check radius of circle, if = 0 -> polygon else is circle.
-    if (strLats.length > 0 && strLongs.length > 0) {
+    
+    if ([Common isValidString:strLats] && [Common isValidString:strLongs]) {
         if (strRadius == nil || [strRadius isEqualToString:@"0"]) {
             //polygon
             NSArray *arrSafeAreaDataLats = [strLats componentsSeparatedByString:@";"];
@@ -503,7 +514,7 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
-        NSLog(@"Error: %@", error.description);
+        NSLog(@"Error callPushNotification: %@", error.description);
         [Common showAlertView:APP_NAME message:MSS_PUSH_NOTI_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
     }];
 }
