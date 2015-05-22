@@ -43,6 +43,11 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [self callWSGetSafeArea];
+    [self startTimerUpdateSafeArea];
+}
+
+- (void) viewDidDisappear:(BOOL)animated {
+    [self stopTimerUpdateSafeArea];
 }
 
 #pragma mark - ACTION
@@ -205,7 +210,6 @@
         [Common hideNetworkActivityIndicator];
         NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
-            
             NSArray *arrData = (NSArray *)responseObject;
             NSArray *arrSafeAreaData;
             if (arrData[0] != nil) {
@@ -313,6 +317,22 @@
 
 -(void)removeAllOverlay {
     [_mapView removeOverlays:_mapView.overlays];
+}
+
+- (void) stopTimerUpdateSafeArea {
+    if (_timerUpdateSafeArea) {
+        [_timerUpdateSafeArea invalidate];
+        _timerUpdateSafeArea = nil;
+    }
+}
+
+- (void) startTimerUpdateSafeArea {
+    [self stopTimerUpdateSafeArea];
+    _timerUpdateSafeArea = [NSTimer timerWithTimeInterval:timeUpdateSafeAreaHome target:self selector:@selector(endTimerUpdateSafeArea) userInfo:nil repeats:YES];
+}
+
+- (void) endTimerUpdateSafeArea {
+    [self callWSGetSafeArea];
 }
 
 #pragma mark - MAP DELEGATE

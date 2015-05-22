@@ -18,6 +18,8 @@
 #define timeTrackingSaveLocationsMoving 5
 #define radiusTrackingSaveLocationMoving 100
 
+#define timeUpdateSafeAreaHome 10
+
 //met
 #define distanceCheckingFilter 2
 

@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, NSTypeMap) {
 @property (nonatomic, strong) MKPolygon *polygon;
 @property (nonatomic, strong) MKPolygonView *polygonView;
 
+@property (nonatomic) NSTimer *timerUpdateSafeArea;
+
 - (IBAction)actionEmergency:(id)sender;
 - (IBAction)actionSettings:(id)sender;
 - (IBAction)actionChangeMapType:(id)sender;
