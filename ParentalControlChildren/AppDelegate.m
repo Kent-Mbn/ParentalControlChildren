@@ -279,7 +279,7 @@
     
     NSLog(@"Killed app -> send location to server");
     //Call to server with new location, if fail save to local.
-    [self callWSAddNewLocation:location.coordinate];
+    //[self callWSAddNewLocation:location.coordinate];
 }
 
 
