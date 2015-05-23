@@ -24,6 +24,7 @@ static UserDefault *globalObject;
     self = [super init];
     if (self) {
         self.child_id = [aDecoder decodeObjectForKey:@"child_id"];
+        self.isPaired = [aDecoder decodeObjectForKey:@"isPaired"];
         self.email = [aDecoder decodeObjectForKey:@"email"];
         self.token_device = [aDecoder decodeObjectForKey:@"token_device"];
         self.full_name = [aDecoder decodeObjectForKey:@"full_name"];
@@ -33,6 +34,7 @@ static UserDefault *globalObject;
         self.radiusCircle = [aDecoder decodeObjectForKey:@"radiusCircle"];
         self.arrContactIds = [aDecoder decodeObjectForKey:@"arrContactIds"];
         self.arrPhoneNumbers = [aDecoder decodeObjectForKey:@"arrPhoneNumbers"];
+        self.deviceTokenParents = [aDecoder decodeObjectForKey:@"deviceTokenParents"];
     }
     
     return self;
@@ -41,6 +43,7 @@ static UserDefault *globalObject;
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:self.child_id forKey:@"child_id"];
+    [aCoder encodeObject:self.isPaired forKey:@"isPaired"];
     [aCoder encodeObject:self.email forKey:@"email"];
     [aCoder encodeObject:self.token_device forKey:@"token_device"];
     [aCoder encodeObject:self.full_name forKey:@"full_name"];
@@ -50,6 +53,7 @@ static UserDefault *globalObject;
     [aCoder encodeObject:self.radiusCircle forKey:@"radiusCircle"];
     [aCoder encodeObject:self.arrContactIds forKey:@"arrContactIds"];
     [aCoder encodeObject:self.arrPhoneNumbers forKey:@"arrPhoneNumbers"];
+    [aCoder encodeObject:self.deviceTokenParents forKey:@"deviceTokenParents"];
 }
 
 - (void) updateUserDefault
@@ -63,6 +67,7 @@ static UserDefault *globalObject;
     UserDefault *user = [UserDefault user];
     user.child_id = nil;
     user.email = nil;
+    user.isPaired = nil;
     user.token_device = nil;
     user.full_name = nil;
     user.content_mss = nil;
@@ -71,6 +76,7 @@ static UserDefault *globalObject;
     user.radiusCircle = nil;
     user.arrContactIds = nil;
     user.arrPhoneNumbers = nil;
+    user.deviceTokenParents = nil;
     [user update];
 }
 

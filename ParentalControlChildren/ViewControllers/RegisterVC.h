@@ -13,6 +13,7 @@
 #import "UIKit+AFNetworking.h"
 #import "APIService.h"
 #import "UserDefault.h"
+#import "AppDelegate.h"
 
 @interface RegisterVC : UIViewController<UITextFieldDelegate>
 @property (weak, nonatomic) IBOutlet UIView *viewBGRegister;

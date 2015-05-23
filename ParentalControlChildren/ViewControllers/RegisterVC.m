@@ -16,6 +16,10 @@
     self.navigationController.navigationBarHidden = YES;
 }
 
+- (void) viewWillAppear:(BOOL)animated {
+    
+}
+
 #pragma mark - FUNCTION
 - (BOOL) validInPut {
     if (_tfPhoneNumber.text.length == 0) {
@@ -53,13 +57,18 @@
         if ([Common validateRespone:responseObject]) {
             //Save infor to userdefault
             NSArray *arrRespone = (NSArray *) responseObject;
-            [[UserDefault user] setChild_id:arrRespone[0][@"device_id"]];
+            [[UserDefault user] setChild_id:[NSString stringWithFormat:@"%@",arrRespone[0][@"device_id"]]];
             [[UserDefault user] setEmail:_tfEmail.text];
             [[UserDefault user] setFull_name:_tfFullName.text];
             [[UserDefault user] setContent_mss:CONTENT_MSS_NOTIFY_DEFAULT];
             [[UserDefault user] setToken_device:[Common getDeviceToken]];
+            [UserDefault update];
             
-            [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];
+            AppDelegate *appDe = APP_DELEGATE;
+            [appDe setGotoHomeChild:^{
+                
+            }];
+            
         } else {
             [Common showAlertView:APP_NAME message:MSS_REGISTER_FAILDED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
         }
@@ -104,12 +113,10 @@
 #pragma mark - ACTION
 
 - (IBAction)actionRegister:(id)sender {
-    /*
     if ([self validInPut]) {
         [self actionHideKeyboard:nil];
         [self callWSRegister];
-    }*/
-    [self performSegueWithIdentifier:@"sugueToHomeScreen" sender:nil];
+    }
 }
 
 - (IBAction)actionHideKeyboard:(id)sender {

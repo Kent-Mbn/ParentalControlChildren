@@ -16,6 +16,7 @@
 }
 
 - (void) viewDidLoad {
+    self.navigationController.navigationBarHidden = YES;
     typeMap = NSTypeMapStandard;
     [self changeStatusOfButtonMapType];
     _viewBottomBar.backgroundColor = masterColor;
@@ -25,25 +26,15 @@
                                                object:nil];
     typeSafeArea = radiusShape;
     _arrayForPolygon = [[NSMutableArray alloc] init];
-    
-    //Start system checking safe area
-    AppDelegate *delegateShare = APP_DELEGATE;
-    if (delegateShare.timerTrackingSafeArea) {
-        [delegateShare.timerTrackingSafeArea invalidate];
-        delegateShare.timerTrackingSafeArea = nil;
-    }
-    [delegateShare beginCheckingSafeArea];
-    
-    if (delegateShare.timerTrackingSaveLocations) {
-        [delegateShare.timerTrackingSaveLocations invalidate];
-        delegateShare.timerTrackingSaveLocations = nil;
-    }
-    [delegateShare beginTrackingSaveLocations];
 }
 
 - (void) viewWillAppear:(BOOL)animated {
     [self callWSGetSafeArea];
     [self startTimerUpdateSafeArea];
+}
+
+- (void) viewDidAppear:(BOOL)animated {
+    
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
@@ -189,7 +180,7 @@
                                             @"address":strAddr,
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
-    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"7")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
@@ -205,8 +196,8 @@
 - (void) callWSGetSafeArea {
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
-    NSLog(@"request_param: %@", URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
-    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@", URL_SERVER_API(API_GET_SAFE_AREA([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA([UserDefault user].child_id)) parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
@@ -238,12 +229,51 @@
                 [self zoomToFitMapAnnotations:_arrayForPolygon];
             }
         } else {
-            //Return error
+            [self getSafeAreaOffline];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"Error Safe Area At Home: %@", error.description);
+        [self getSafeAreaOffline];
     }];
+}
+
+- (void) getSafeAreaOffline {
+    //Get data from userdefault.
+    NSString *strRadius;
+    NSString *strLats;
+    NSString *strLongs;
+    
+    strRadius = [NSString stringWithFormat:@"%@", [UserDefault user].radiusCircle];
+    strLats = [NSString stringWithFormat:@"%@", [UserDefault user].lats];
+    strLongs = [NSString stringWithFormat:@"%@", [UserDefault user].longs];
+    
+    //Check lat long length > 0, check radius of circle, if = 0 -> polygon else is circle.
+    
+    if ([Common isValidString:strLats] && [Common isValidString:strLongs]) {
+        [_arrayForPolygon removeAllObjects];
+        if (strRadius == nil || [strRadius isEqualToString:@"0"]) {
+            //polygon
+            NSArray *arrSafeAreaDataLats = [strLats componentsSeparatedByString:@";"];
+            NSArray *arrSafeAreaDataLongs = [strLongs componentsSeparatedByString:@";"];
+            typeSafeArea = polygonShape;
+            NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+            for (int i = 0; i < [arrSafeAreaDataLats count]; i++) {
+                CLLocation *locationPoint = [[CLLocation alloc] initWithLatitude:[[arrSafeAreaDataLats objectAtIndex:i] doubleValue] longitude:[[arrSafeAreaDataLongs objectAtIndex:i] doubleValue]];
+                [arrLocations addObject:locationPoint];
+            }
+            _arrayForPolygon = arrLocations;
+            [self drawPolygon];
+            [self zoomToFitMapAnnotations:_arrayForPolygon];
+        } else {
+            //circle
+            typeSafeArea = radiusShape;
+            centerPointCircle = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", strLats, strLongs]];
+            radiusCircle = [strRadius intValue];
+            [self addCircle:radiusCircle andCircleCoordinate:centerPointCircle];
+        }
+    }
+
 }
 
 - (void) returnNewLocation :(NSNotification *) noti {

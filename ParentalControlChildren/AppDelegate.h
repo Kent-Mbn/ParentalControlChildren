@@ -76,5 +76,9 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
 //Call message controller
 - (void) callMessageVC;
 
+//Redirect
+- (void) setGotoHomeChild:(dispatch_block_t)block;
+- (void) setGotoRegister:(dispatch_block_t)block;
+
 @end
 

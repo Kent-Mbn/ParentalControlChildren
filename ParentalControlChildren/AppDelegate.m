@@ -59,18 +59,6 @@
                                                  selector:@selector(returnNewLocation:)
                                                      name:kNotificationGetNewLocation
                                                    object:nil];
-        
-        /*
-        NSTimeInterval time = timeTrackingLocation;
-        self.locationUpdateTimer =
-        [NSTimer scheduledTimerWithTimeInterval:time
-                                         target:self
-                                       selector:@selector(updateLocation)
-                                       userInfo:nil
-                                        repeats:YES];
-        self.locationRestartUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:time target:self selector:@selector(restartLocation) userInfo:nil repeats:YES];
-         */
-        
         /* INIT for filled app */
         if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
             // This "afterResume" flag is just to show that he receiving location updates
@@ -86,9 +74,22 @@
             }
             
             [self.shareModel.anotherLocationManager startMonitoringSignificantLocationChanges];
+        } else if([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+            [self actionAskForPair:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
         }
     }
     
+    //Redirect to Home or not
+    if ([Common isValidString:[NSString stringWithFormat:@"%@", [UserDefault user].child_id]]) {
+        //Push to Home screen
+        [self setGotoHomeChild:^{
+            
+        }];
+    } else {
+        [self setGoToRegister:^{
+            
+        }];
+    }
     return YES;
 }
 
@@ -156,6 +157,10 @@
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
     NSLog(@"userInfo: %@", userInfo);
     application.applicationIconBadgeNumber = 0;
+    [self actionAskForPair:userInfo];
+}
+
+- (void) actionAskForPair:(NSDictionary *) userInfo {
     NSString *msg = userInfo[@"aps"][@"alert"];
     [Common showAlertView:APP_NAME message:msg delegate:self cancelButtonTitle:@"Cancel" arrayTitleOtherButtons:@[@"Confirm"] tag:1];
     strPusherId = userInfo[@"aps"][@"pusher_id"];
@@ -174,6 +179,17 @@
         [Common hideLoadingViewGlobal];
         NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
+            //Save is Paired and device token of parent
+            [UserDefault user].isPaired = @"YES";
+            
+            
+            [[UserDefault user] update];
+            if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
+                //Start system checking safe area
+                [self beginCheckingSafeArea];
+                [self beginTrackingSaveLocations];
+            }
+            
             [Common showAlertView:APP_NAME message:MSS_CONFIRM_SUCCESS delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
         } else {
             [Common showAlertView:APP_NAME message:MSS_CONFIRM_FAILED delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
@@ -184,10 +200,43 @@
     }];
 }
 
+- (void) setGoToRegister:(dispatch_block_t)block
+{
+    UIStoryboard *storyboard = [self.window.rootViewController storyboard];
+    if (!storyboard) {
+        storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    }
+    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"STORYBOARD_ID_REGISTER"];
+    
+    if (![self.window.rootViewController isEqual:viewController]) {
+        self.window.rootViewController = viewController;
+        if (block) {
+            block();
+        }
+    }
+}
+
+- (void) setGotoHomeChild:(dispatch_block_t)block
+{
+    UIStoryboard *storyboard = [self.window.rootViewController storyboard];
+    if (!storyboard) {
+        storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
+    }
+    UIViewController *viewController = [storyboard instantiateViewControllerWithIdentifier:@"STORYBOARD_ID_HOME"];
+    
+    if (![self.window.rootViewController isEqual:viewController]) {
+        self.window.rootViewController = viewController;
+        if (block) {
+            block();
+        }
+    }
+}
+
+
 #pragma mark - ALERT DELEGATE
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1 && alertView.tag == 1) {
-        if (strChildId.length > 0 && strPusherId.length > 0) {
+        if ([Common isValidString:strChildId] && [Common isValidString:strPusherId]) {
             [self callWSConfirmAddPair:strPusherId andStrChildId:strChildId];
         }
     }
@@ -316,7 +365,10 @@
 - (void) beginCheckingSafeArea {
     //Begin for first call
     [self updateSafeArea];
-    
+    if (self.timerTrackingSafeArea) {
+        [self.timerTrackingSafeArea invalidate];
+        self.timerTrackingSafeArea = nil;
+    }
     self.timerTrackingSafeArea = [NSTimer scheduledTimerWithTimeInterval:timeCheckingSafeArea
                                      target:self
                                    selector:@selector(endTimerCheckingSafeArea)
@@ -331,17 +383,21 @@
 - (void) notifyToParent {
     if (lastLocationAppDelegate.latitude != 0 && lastLocationAppDelegate.longitude != 0) {
         if (typeSafeArea == radiusShape) {
-            if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
-                [self callPushNotification];
-                if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-                    [self callMessageVC];
+            if (centerPointCircle.latitude !=0 && centerPointCircle.longitude != 0 && radiusCircle > 0) {
+                if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
+                    [self callPushNotification];
+                    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                        [self callMessageVC];
+                    }
                 }
             }
         } else {
-            if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
-                [self callPushNotification];
-                if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
-                    [self callMessageVC];
+            if ([_arrayForPolygon count] > 2) {
+                if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
+                    [self callPushNotification];
+                    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                        [self callMessageVC];
+                    }
                 }
             }
         }
@@ -355,7 +411,7 @@
                                             
                                             } mutableCopy];
     //NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_SAFE_AREA(@"3")));
-    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:URL_SERVER_API(API_GET_SAFE_AREA([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         //NSLog(@"response: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
@@ -501,7 +557,7 @@
                                             @"device_token":@"37dea398f12c9d0de9dd84c954527321286fb41480e32f6e45dc313a0d8594d2",
                                             @"push_to":@"parent",
                                             @"message":MSS_PUSH_NOTI_OUT_SAFE_AREA,
-                                            @"pusher_id":@"3",
+                                            @"pusher_id":[UserDefault user].child_id,
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_PUSH_NOTIFICATION));
     [manager POST:URL_SERVER_API(API_PUSH_NOTIFICATION) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -565,8 +621,8 @@
                                             @"longitude":@(newPoint.longitude),
                                             @"address":@"address",
                                             } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"3")));
-    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"++++ response Add New Location ++++: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
@@ -608,9 +664,10 @@
                                             @"latitude":strLats,
                                             @"longitude":strLongs,
                                             @"status_request":@"0",
+                                            @"adjust_time":@(timeTrackingSaveLocations),
                                             } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"3")));
-    [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE(@"3")) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [Common hideNetworkActivityIndicator];
         NSLog(@"++++ response OLD LOCATION ++++++: %@", responseObject);
         if ([Common validateRespone:responseObject]) {
