@@ -31,6 +31,15 @@
 - (void) viewWillAppear:(BOOL)animated {
     [self callWSGetSafeArea];
     [self startTimerUpdateSafeArea];
+    
+    AppDelegate *appDelegate = APP_DELEGATE;
+    if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
+        //Start system checking safe area
+        if (appDelegate.timerTrackingSafeArea == nil) {
+            [appDelegate beginCheckingSafeArea];
+            [appDelegate beginTrackingSaveLocations];
+        }
+    }
 }
 
 - (void) viewDidAppear:(BOOL)animated {
