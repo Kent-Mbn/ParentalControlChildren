@@ -385,7 +385,7 @@
         if (typeSafeArea == radiusShape) {
             if (centerPointCircle.latitude !=0 && centerPointCircle.longitude != 0 && radiusCircle > 0) {
                 if (![Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocationAppDelegate]) {
-                    [self callPushNotification];
+                    [self callGetParentsTokenDeviceAndPush];
                     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
                         [self callMessageVC];
                     }
@@ -394,7 +394,7 @@
         } else {
             if ([_arrayForPolygon count] > 2) {
                 if (![Common checkPointInsidePolygon:_arrayForPolygon andCheckPoint:lastLocationAppDelegate]) {
-                    [self callPushNotification];
+                    [self callGetParentsTokenDeviceAndPush];
                     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
                         [self callMessageVC];
                     }
@@ -550,11 +550,40 @@
     [self.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (void) callPushNotification {
+- (void) callGetParentsTokenDeviceAndPush {
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
     NSMutableDictionary *request_param = [@{
-                                            @"device_token":@"37dea398f12c9d0de9dd84c954527321286fb41480e32f6e45dc313a0d8594d2",
+                                            
+                                            } mutableCopy];
+    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_GET_PARENTS_OF_DEVICE([UserDefault user].child_id)));
+    [manager POST:URL_SERVER_API(API_GET_PARENTS_OF_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        [Common hideNetworkActivityIndicator];
+        if ([Common validateRespone:responseObject]) {
+            if (responseObject[0][@"data"]) {
+                NSArray *arrDatas = responseObject[0][@"data"];
+                if ([arrDatas count] > 0) {
+                    for (int i = 0; i < [arrDatas count]; i++) {
+                        NSDictionary *dicAParent = [arrDatas objectAtIndex:i];
+                        [self callPushNotification:dicAParent[@"register_id"]];
+                    }
+                }
+            }
+        } else {
+            
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        [Common hideNetworkActivityIndicator];
+        
+    }];
+
+}
+
+- (void) callPushNotification:(NSString *)parentDevice {
+    [Common showNetworkActivityIndicator];
+    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSMutableDictionary *request_param = [@{
+                                            @"device_token":parentDevice,
                                             @"push_to":@"parent",
                                             @"message":MSS_PUSH_NOTI_OUT_SAFE_AREA,
                                             @"pusher_id":[UserDefault user].child_id,
