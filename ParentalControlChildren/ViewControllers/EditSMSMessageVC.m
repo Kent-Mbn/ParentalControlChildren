@@ -49,6 +49,7 @@
 - (IBAction)actionDone:(id)sender {
     if (_textView.text.length > 0) {
         [[UserDefault user] setContent_mss:_textView.text];
+        [UserDefault update];
         [self.navigationController popViewControllerAnimated:YES];
     } else {
         [Common showAlertView:APP_NAME message:MSS_CONTENT_IS_NULL delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];

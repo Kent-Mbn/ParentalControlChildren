@@ -242,6 +242,7 @@
     //Save to user default again
     [[UserDefault user] setArrContactIds:[arrUsIds componentsJoinedByString:@"*"]];
     [[UserDefault user] setArrPhoneNumbers:[arrUsPhones componentsJoinedByString:@"*"]];
+    [UserDefault update];
 }
 
 + (void) removeContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones {
@@ -268,6 +269,7 @@
         //Convert array to string again and save to userdefault
         [[UserDefault user] setArrContactIds:[arrMuIds componentsJoinedByString:@"*"]];
         [[UserDefault user] setArrPhoneNumbers:[arrMuPhones componentsJoinedByString:@"*"]];
+        [UserDefault update];
     }
 }
 

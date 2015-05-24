@@ -147,6 +147,7 @@
     tokenStr = [tokenStr stringByReplacingOccurrencesOfString:@" " withString:@""];
     [Common updateDeviceToken:tokenStr];
     [[UserDefault user] setToken_device:tokenStr];
+    [UserDefault update];
     NSLog(@"Device Token Child App: %@", tokenStr);
 }
 
@@ -181,8 +182,6 @@
         if ([Common validateRespone:responseObject]) {
             //Save is Paired and device token of parent
             [UserDefault user].isPaired = @"YES";
-            
-            
             [[UserDefault user] update];
             if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
                 //Start system checking safe area
@@ -430,6 +429,7 @@
                 [[UserDefault user] setLats:objPoint[@"latitude"]];
                 [[UserDefault user] setLongs:objPoint[@"longitude"]];
                 [[UserDefault user] setRadiusCircle:objPoint[@"radius"]];
+                [UserDefault update];
                 
                 NSLog(@"Lats: %@", [UserDefault user].lats);
                 
@@ -448,6 +448,7 @@
                 }
                 [[UserDefault user] setLats:[Common returnStringArrayLat:arrLocations]];
                 [[UserDefault user] setLongs:[Common returnStringArrayLong:arrLocations]];
+                [UserDefault update];
                 
                 _arrayForPolygon = arrLocations;
             }
