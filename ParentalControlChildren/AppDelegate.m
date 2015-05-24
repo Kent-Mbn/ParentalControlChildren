@@ -694,7 +694,7 @@
                                             @"latitude":strLats,
                                             @"longitude":strLongs,
                                             @"status_request":@"0",
-                                            @"adjust_time":@(timeTrackingSaveLocations),
+                                            @"adjust_time":@(timeTrackingSaveLocationsMoving),
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)));
     [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
