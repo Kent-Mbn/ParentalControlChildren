@@ -26,10 +26,12 @@
                                                object:nil];
     typeSafeArea = radiusShape;
     _arrayForPolygon = [[NSMutableArray alloc] init];
+    _arrayToZooming = [[NSMutableArray alloc] init];
+    radiusCircle = 0;
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    [self callWSGetSafeArea];
+    //[self callWSGetSafeArea];
     [self startTimerUpdateSafeArea];
     
     AppDelegate *appDelegate = APP_DELEGATE;
@@ -84,8 +86,6 @@
             [self addPinViewToMap:pointLocation];
         }
     }
-    
-    //[self zoomToFitMapAnnotations];
 }
 
 -(void) changeStatusOfButtonMapType {
@@ -154,7 +154,6 @@
     //pointAnn.title = @"Name";
     //pointAnn.subtitle = placemark.name;
     [_mapView addAnnotation:pointAnn];
-    
     [_mapView selectAnnotation:pointAnn animated:YES];
 }
 
@@ -162,22 +161,6 @@
     MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
     point.coordinate = location;
     [_mapView addAnnotation:point];
-}
-
--(void) zoomToFitMapAnnotations {
-    int count_point = [_mapView.annotations count];
-    if (count_point == 0) {
-        return;
-    }
-    
-    MKMapPoint points[count_point];
-    for (int i = 0; i < count_point; i++) {
-        MKAnnotationView *oneAnno = [_mapView.annotations objectAtIndex:i];
-        points[i] = MKMapPointForCoordinate([oneAnno.annotation coordinate]);
-    }
-    
-    MKPolygon *poly = [MKPolygon polygonWithPoints:points count:count_point];
-    [_mapView setVisibleMapRect:[poly boundingMapRect] edgePadding:UIEdgeInsetsMake(100, 100, 100, 100) animated:YES];
 }
 
 - (void) callWSUpdateHistoryLocation:(CLLocationCoordinate2D)curLocation andAddress:(NSString *)strAddr {
@@ -229,13 +212,13 @@
             } else {
                 //Draw polygon
                 typeSafeArea = polygonShape;
+                radiusCircle = 0;
                 for (int i = 0; i < [arrSafeAreaData count]; i++) {
                     NSDictionary *objPoint = [arrSafeAreaData objectAtIndex:i];
                     CLLocation *locationPoint = [[CLLocation alloc] initWithLatitude:[objPoint[@"latitude"] doubleValue] longitude:[objPoint[@"longitude"] doubleValue]];
                     [_arrayForPolygon addObject:locationPoint];
                 }
                 [self drawPolygon];
-                [self zoomToFitMapAnnotations:_arrayForPolygon];
             }
         } else {
             [self getSafeAreaOffline];
@@ -263,6 +246,7 @@
         [_arrayForPolygon removeAllObjects];
         if (strRadius == nil || [strRadius isEqualToString:@"0"]) {
             //polygon
+            radiusCircle = 0;
             NSArray *arrSafeAreaDataLats = [strLats componentsSeparatedByString:@";"];
             NSArray *arrSafeAreaDataLongs = [strLongs componentsSeparatedByString:@";"];
             typeSafeArea = polygonShape;
@@ -273,7 +257,6 @@
             }
             _arrayForPolygon = arrLocations;
             [self drawPolygon];
-            [self zoomToFitMapAnnotations:_arrayForPolygon];
         } else {
             //circle
             typeSafeArea = radiusShape;
@@ -300,6 +283,7 @@
                 [_mapView removeAnnotations:_mapView.annotations];
                 CLLocation *locationUpdate = [[CLLocation alloc] initWithLatitude:[theData[@"lat"] doubleValue] longitude:[theData[@"long"] doubleValue]];
                 [self addAndFocusPinViewToMap:locationUpdate];
+                [self zoomToFitMapAnnotations];
             }
         }
     }
@@ -329,6 +313,7 @@
     
     [_mapView addOverlay:_polygon];
     
+    [self zoomToFitMapAnnotations];
 }
 
 - (void)addCircle:(double)radius andCircleCoordinate:(CLLocationCoordinate2D) coordinate {
@@ -338,20 +323,53 @@
     MKCircle *circle = [MKCircle circleWithCenterCoordinate:coordinate radius:radius];
     [_mapView addOverlay:circle];
     
-    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(coordinate, 3000, 3000);
-    [_mapView setRegion:region animated:YES];
+    [self zoomToFitMapAnnotations];
 }
 
--(void) zoomToFitMapAnnotations:(NSMutableArray *)arrLocationPins {
-    MKMapPoint points[[arrLocationPins count]];
-    for (int i = 0; i < [arrLocationPins count]; i++) {
-        CLLocation *locationTemp;
-        locationTemp = (CLLocation *)[arrLocationPins objectAtIndex:i];
-        points[i] = MKMapPointForCoordinate(locationTemp.coordinate);
+-(void) zoomToFitMapAnnotations {
+    [_arrayToZooming removeAllObjects];
+    if (lastLocation.latitude != 0 && lastLocation.longitude != 0) {
+        [_arrayToZooming addObject:[[CLLocation alloc] initWithLatitude:lastLocation.latitude longitude:lastLocation.longitude]];
     }
     
-    MKPolygon *poly = [MKPolygon polygonWithPoints:points count:[arrLocationPins count]];
-    [_mapView setVisibleMapRect:[poly boundingMapRect] edgePadding:UIEdgeInsetsMake(100, 100, 100, 100) animated:YES];
+    if (radiusCircle > 0) {
+        //Circle
+        if (centerPointCircle.latitude != 0 && centerPointCircle.longitude != 0) {
+            [_arrayToZooming addObject:[[CLLocation alloc] initWithLatitude:centerPointCircle.latitude longitude:centerPointCircle.longitude]];
+        }
+        
+    } else {
+        //Polygon
+        if ([_arrayForPolygon count] > 0) {
+            for (int i = 0; i < [_arrayForPolygon count]; i++) {
+                CLLocation *locationT = [_arrayForPolygon objectAtIndex:i];
+                [_arrayToZooming addObject:locationT];
+            }
+        }
+    }
+    
+    if ([_arrayToZooming count] > 0) {
+        MKMapPoint points[[_arrayToZooming count]];
+        for (int i = 0; i < [_arrayToZooming count]; i++) {
+            CLLocation *locationTemp;
+            locationTemp = (CLLocation *)[_arrayToZooming objectAtIndex:i];
+            points[i] = MKMapPointForCoordinate(locationTemp.coordinate);
+        }
+        
+        MKPolygon *poly = [MKPolygon polygonWithPoints:points count:[_arrayToZooming count]];
+        if (radiusCircle == 0) {
+            //Polygon
+            [_mapView setVisibleMapRect:[poly boundingMapRect] edgePadding:UIEdgeInsetsMake(100, 100, 100, 100) animated:YES];
+        } else {
+            //Circle
+            if ([Common checkPointInsideCircle:radiusCircle andCenterPoint:centerPointCircle andCheckPoint:lastLocation]) {
+                MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(centerPointCircle, radiusCircle + 1000, radiusCircle + 1000);
+                [_mapView setRegion:region animated:YES];
+            } else {
+                [_mapView setVisibleMapRect:[poly boundingMapRect] edgePadding:UIEdgeInsetsMake(100, 100, 100, 100) animated:YES];
+            }
+        }
+    }
 }
 
 -(void)removeAllOverlay {
