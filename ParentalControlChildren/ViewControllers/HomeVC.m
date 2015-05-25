@@ -33,19 +33,13 @@
 - (void) viewWillAppear:(BOOL)animated {
     //[self callWSGetSafeArea];
     [self startTimerUpdateSafeArea];
-    
-    AppDelegate *appDelegate = APP_DELEGATE;
-    if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
-        //Start system checking safe area
-        if (appDelegate.timerTrackingSafeArea == nil) {
-            [appDelegate beginCheckingSafeArea];
-            [appDelegate beginTrackingSaveLocations];
-        }
-    }
 }
 
 - (void) viewDidAppear:(BOOL)animated {
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    NSLog(@"Tracking location: %@", arrDataLocation);
     
+   // [Common showAlertView:APP_NAME message:[NSString stringWithFormat:@"%@", arrDataLocation] delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
@@ -269,22 +263,34 @@
 }
 
 - (void) returnNewLocation :(NSNotification *) noti {
+    AppDelegate *appDelegate = APP_DELEGATE;
     NSDictionary *theData = [noti userInfo];
     if (theData != nil) {
         NSLog(@"New location add Home: %@", theData);
+        
+        //Start system tracking location and safe area
+        if (!appDelegate.isStartSystemTracking) {
+            if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
+                appDelegate.isStartSystemTracking = YES;
+                //Start system checking safe area
+                if (appDelegate.timerTrackingSafeArea == nil) {
+                    [appDelegate beginCheckingSafeArea];
+                    [appDelegate beginTrackingSaveLocations];
+                }
+            }
+        }
+        
         CLLocationCoordinate2D newLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
         
         //Checking distance from old location and new location
         if (CLLocationCoordinate2DIsValid(lastLocation)) {
-            if ([Common calDistanceTwoCoordinate:lastLocation andSecondPoint:newLocation] > distanceCheckingFilter) {
-                lastLocation = newLocation;
+            lastLocation = newLocation;
                 
-                //Update map again
-                [_mapView removeAnnotations:_mapView.annotations];
-                CLLocation *locationUpdate = [[CLLocation alloc] initWithLatitude:[theData[@"lat"] doubleValue] longitude:[theData[@"long"] doubleValue]];
-                [self addAndFocusPinViewToMap:locationUpdate];
-                [self zoomToFitMapAnnotations];
-            }
+            //Update map again
+            [_mapView removeAnnotations:_mapView.annotations];
+            CLLocation *locationUpdate = [[CLLocation alloc] initWithLatitude:[theData[@"lat"] doubleValue] longitude:[theData[@"long"] doubleValue]];
+            [self addAndFocusPinViewToMap:locationUpdate];
+            [self zoomToFitMapAnnotations];
         }
     }
 }

@@ -41,6 +41,7 @@
     self.shareModel = [LocationShareModel sharedModel];
     self.shareModel.afterResume = NO;
     typeSafeArea = radiusShape;
+    self.isStartSystemTracking = NO;
     
     //We have to make sure that the Background App Refresh is enable for the Location updates to work in the background.
     if([[UIApplication sharedApplication] backgroundRefreshStatus] == UIBackgroundRefreshStatusDenied){
@@ -78,6 +79,8 @@
             [self actionAskForPair:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
         }
     }
+    
+    [self saveLocationNilToLocal];
     
     //Redirect to Home or not
     if ([Common isValidString:[NSString stringWithFormat:@"%@", [UserDefault user].child_id]]) {
@@ -136,7 +139,15 @@
     [self saveContext];
     
     //Remove all data
-    [Common removeFileLocalTrackingLocation];
+    //[Common removeFileLocalTrackingLocation];
+    
+    //Check to save location (0;0) to file local
+    //If file local has data and is Paired = YES
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    NSString *strIsPaired = [UserDefault user].isPaired;
+    if ([arrDataLocation count] > 0 && [Common isValidString:strIsPaired] && [strIsPaired isEqualToString:@"YES"]) {
+        [Common updateTimeWhenTerminateApp:[NSString stringWithFormat:@"%.0f", [[NSDate date] timeIntervalSince1970]]];
+    }
 }
 
 #pragma mark - NOTIFICATION DELEGATE
@@ -231,6 +242,29 @@
     }
 }
 
+- (void) saveLocationNilToLocal {
+    //Save locations (0;0) to local file
+    //Get time NOW and minus time saved -> devide for timeTrakingMoving -> count of location (0;0) -> save to local file
+    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
+    NSString *strIsPaired = [UserDefault user].isPaired;
+    if ([arrDataLocation count] > 0 && [Common isValidString:strIsPaired] && [strIsPaired isEqualToString:@"YES"]) {
+        float timeWhenAppTerminate = 0;
+        float timeSaved = [[Common getTimeWhenTerminateApp] floatValue];
+        float timeNow = [[NSDate date] timeIntervalSince1970];
+        int countOfArrayLocationNil = 0;
+        
+        if(timeSaved > 0) {
+            timeWhenAppTerminate = timeNow - timeSaved;
+            countOfArrayLocationNil = timeWhenAppTerminate / timeTrackingSaveLocationsMoving;
+            for (int i = 0; i < countOfArrayLocationNil; i++) {
+                //Write location to file
+                NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@"0",@"0",@"background"] forKeys:@[@"lat",@"long",@"type"]];
+                [Common writeObjToFileTrackingLocation:dicObj];
+            }
+        }
+    }
+}
+
 
 #pragma mark - ALERT DELEGATE
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -256,27 +290,16 @@
     NSDictionary *theData = [noti userInfo];
     if (theData != nil) {
         NSLog(@"+++ New location: %@", theData);
-        CLLocationCoordinate2D newLocation = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
-        lastLocationAppDelegate = newLocation;
-        
-        /*
-        if (CLLocationCoordinate2DIsValid(lastLocationAppDelegate)) {
-            if ([Common calDistanceTwoCoordinate:lastLocationAppDelegate andSecondPoint:newLocation] > distanceCheckingFilter) {
-                lastLocationAppDelegate = newLocation;
-                //Write location to file
-                 NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(lastLocationAppDelegate.latitude),@(lastLocationAppDelegate.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
-                 [Common writeObjToFileTrackingLocation:dicObj];
-            }
-        }
-         */
+        lastLocationAppDelegate = [Common get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", theData[@"lat"], theData[@"long"]]];
+        NSLog(@"Last location appdelegate: %f", lastLocationAppDelegate.latitude);
     }
 }
 
 -(void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    CLLocation *location = [locations lastObject];
+    //CLLocation *location = [locations lastObject];
     
-    NSLog(@"Killed app -> send location to server");
+    //NSLog(@"Killed app -> send location to server");
     //Call to server with new location, if fail save to local.
     //[self callWSAddNewLocation:location.coordinate];
 }
@@ -635,7 +658,7 @@
         [self.timerRestartTrackingSaveLocationsMoving invalidate];
         self.timerRestartTrackingSaveLocationsMoving = nil;
     }
-    self.timerRestartTrackingSaveLocationsMoving = [NSTimer scheduledTimerWithTimeInterval:10
+    self.timerRestartTrackingSaveLocationsMoving = [NSTimer scheduledTimerWithTimeInterval:timeTrackingSaveLocationsMoving
                                                                        target:self
                                                                      selector:@selector(endTimerRestartTrackingSaveLocationsMoving)
                                                                      userInfo:nil
@@ -727,19 +750,20 @@
     NSLog(@"------  endTimerTrackingSaveLocationsMoving");
     //Check tracking point is out side radius tracking moving
     NSLog(@"Distance: %f", [Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate]);
-    
-    if ([Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate] >= radiusTrackingSaveLocationMoving) {
-        // IS out side
-        //Call add new location to server
-        [self callWSAddNewLocation:lastLocationAppDelegate];
-        
-        //Restart process
-        [self restartTrackingSaveLocationsMoving];
-    } else {
-        NSLog(@"Distance little: %f", [Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate]);
-        if ([Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate] > distanceCheckingFilter) {
-            //Save to local
-            [self savePointToLocal:lastLocationAppDelegate];
+    if ([Common isValidCoordinate:centerTrackingMoving] && [Common isValidCoordinate:lastLocationAppDelegate]) {
+        if ([Common calDistanceTwoCoordinate:centerTrackingMoving andSecondPoint:lastLocationAppDelegate] >= radiusTrackingSaveLocationMoving) {
+            // IS out side
+            //Call add new location to server
+            [self callWSAddNewLocation:lastLocationAppDelegate];
+            
+            //Restart process
+            [self restartTrackingSaveLocationsMoving];
+        } else {
+            if ([Common isValidCoordinate:middleTrackingMoving]) {
+                NSLog(@"Distance little: %f", [Common calDistanceTwoCoordinate:middleTrackingMoving andSecondPoint:lastLocationAppDelegate]);
+                    //Save to local
+                [self savePointToLocal:lastLocationAppDelegate];
+            }
         }
     }
     middleTrackingMoving = lastLocationAppDelegate;
@@ -749,7 +773,7 @@
     NSLog(@"------  endTimerRestartTrackingSaveLocationsMoving");
     [self.timerRestartTrackingSaveLocationsMoving invalidate];
     self.timerRestartTrackingSaveLocationsMoving = nil;
-    [self beginCheckingSafeArea];
+    [self beginTrackingSaveLocations];
 }
 
 @end

@@ -25,6 +25,9 @@
 + (NSString *) getDeviceToken;
 + (BOOL) isValidEmail:(NSString *)checkString;
 
++ (void) updateTimeWhenTerminateApp:(NSString *) time;
++ (NSString *) getTimeWhenTerminateApp;
+
 + (AFHTTPRequestOperationManager *)AFHTTPRequestOperationManagerReturn;
 + (BOOL) validateRespone:(id) respone;
 
@@ -49,6 +52,8 @@
 + (void) removeContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones;
 
 + (BOOL) isValidString:(NSString *) strCheck;
+
++ (BOOL) isValidCoordinate:(CLLocationCoordinate2D) checkPoint;
 
 #pragma mark - Algorthim Checking Point In Polygon or In Circle
 + (BOOL) checkPointInsidePolygon:(NSMutableArray *) arrPonits andCheckPoint:(CLLocationCoordinate2D) checkPoint;

@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
     //Tracking save location
     CLLocationCoordinate2D centerTrackingMoving;
     CLLocationCoordinate2D middleTrackingMoving;
+
 }
 
 @property (strong, nonatomic) UIWindow *window;
@@ -62,6 +63,9 @@ typedef NS_ENUM(NSInteger, NSTypeOfSafeArea) {
 @property (nonatomic) NSTimer *timerTrackingSaveLocations;
 @property (nonatomic) NSTimer *timerTrackingSaveLocationsMoving;
 @property (nonatomic) NSTimer *timerRestartTrackingSaveLocationsMoving;
+
+//BOOL isStart system tracking location moving and tracking safe are.
+@property (nonatomic) BOOL isStartSystemTracking;
 
 
 - (void)saveContext;

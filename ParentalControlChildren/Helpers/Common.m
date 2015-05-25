@@ -56,6 +56,15 @@
     return [[NSUserDefaults standardUserDefaults] stringForKey:@"deviceToken"];
 }
 
++ (void) updateTimeWhenTerminateApp:(NSString *) time {
+    [[NSUserDefaults standardUserDefaults] setObject:time forKey:@"timeTerminate"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
++ (NSString *) getTimeWhenTerminateApp {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"timeTerminate"];
+}
+
 + (BOOL) isValidEmail:(NSString *)checkString
 {
     checkString = [checkString lowercaseString];
@@ -275,6 +284,13 @@
 
 + (BOOL) isValidString:(NSString *) strCheck {
     if (strCheck.length > 0 && ![strCheck isEqual:[NSNull null]] && ![strCheck isEqualToString:@"(null)"]) {
+        return YES;
+    }
+    return NO;
+}
+
++ (BOOL) isValidCoordinate:(CLLocationCoordinate2D) checkPoint {
+    if (checkPoint.latitude != 0 && checkPoint.longitude != 0 && CLLocationCoordinate2DIsValid(checkPoint)) {
         return YES;
     }
     return NO;
