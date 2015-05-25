@@ -222,7 +222,17 @@
         CFStringRef firstName, lastName;
         firstName = ABRecordCopyValue(people, kABPersonFirstNameProperty);
         lastName  = ABRecordCopyValue(people, kABPersonLastNameProperty);
-        fullName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+        
+        NSString *strFirstName = [NSString stringWithFormat:@"%@", firstName];
+        NSString *strLastName = [NSString stringWithFormat:@"%@", lastName];
+        
+        if ([Common isValidString:strFirstName] && [Common isValidString:strLastName]) {
+            fullName = [NSString stringWithFormat:@"%@ %@", firstName, lastName];
+        } else if ([Common isValidString:strFirstName]) {
+            fullName = strFirstName;
+        } else if ([Common isValidString:strLastName]) {
+            fullName = strLastName;
+        }
         
         //Get mobile phone
         ABMultiValueRef phones =(__bridge ABMultiValueRef)((__bridge NSString*)ABRecordCopyValue(people, kABPersonPhoneProperty));
