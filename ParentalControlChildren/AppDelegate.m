@@ -80,7 +80,7 @@
         }
     }
     
-    [self saveLocationNilToLocal];
+    //[self saveLocationNilToLocal];
     
     //Redirect to Home or not
     if ([Common isValidString:[NSString stringWithFormat:@"%@", [UserDefault user].child_id]]) {
@@ -141,6 +141,7 @@
     //Remove all data
     //[Common removeFileLocalTrackingLocation];
     
+    /*
     //Check to save location (0;0) to file local
     //If file local has data and is Paired = YES
     NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
@@ -148,6 +149,7 @@
     if ([arrDataLocation count] > 0 && [Common isValidString:strIsPaired] && [strIsPaired isEqualToString:@"YES"]) {
         [Common updateTimeWhenTerminateApp:[NSString stringWithFormat:@"%.0f", [[NSDate date] timeIntervalSince1970]]];
     }
+     */
 }
 
 #pragma mark - NOTIFICATION DELEGATE
@@ -242,6 +244,7 @@
     }
 }
 
+/*
 - (void) saveLocationNilToLocal {
     //Save locations (0;0) to local file
     //Get time NOW and minus time saved -> devide for timeTrakingMoving -> count of location (0;0) -> save to local file
@@ -258,12 +261,13 @@
             countOfArrayLocationNil = timeWhenAppTerminate / timeTrackingSaveLocationsMoving;
             for (int i = 0; i < countOfArrayLocationNil; i++) {
                 //Write location to file
-                NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@"0",@"0",@"background"] forKeys:@[@"lat",@"long",@"type"]];
+                NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@"0",@"0",[NSString stringWithFormat:@"%.0f", [[NSDate date] timeIntervalSince1970]],@"background"] forKeys:@[@"lat",@"long",@"created_at",@"type"]];
                 [Common writeObjToFileTrackingLocation:dicObj];
             }
         }
     }
 }
+ */
 
 
 #pragma mark - ALERT DELEGATE
@@ -685,8 +689,7 @@
                 NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
                 for (int i = 0; i < [arrDataLocation count]; i++) {
                     NSDictionary *objDic = [arrDataLocation objectAtIndex:i];
-                    CLLocation *locObj = [[CLLocation alloc] initWithLatitude:[objDic[@"lat"] doubleValue] longitude:[objDic[@"long"] doubleValue]];
-                    [arrLocations addObject:locObj];
+                    [arrLocations addObject:objDic];
                 }
                 [self callWSAddOldLocation:arrLocations];
             }
@@ -706,8 +709,11 @@
     NSLog(@"------  callWSAddOldLocation");
     NSString *strLats = @"";
     NSString *strLongs = @"";
+    NSString *strCreatedAts = @"";
+    
     strLats = [Common returnStringArrayLat:arrPoints];
     strLongs = [Common returnStringArrayLong:arrPoints];
+    strCreatedAts = [Common returnStringArrayCreatedAtLocation:arrPoints];
     
     //status_request: add time created at for each point. if (status_created = 0) created time += adjust_time
     
@@ -716,8 +722,7 @@
     NSMutableDictionary *request_param = [@{
                                             @"latitude":strLats,
                                             @"longitude":strLongs,
-                                            @"status_request":@"0",
-                                            @"adjust_time":@(timeTrackingSaveLocationsMoving),
+                                            @"created_at":strCreatedAts,
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)));
     [manager POST:URL_SERVER_API(API_ADD_OLD_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -737,7 +742,7 @@
 - (void) savePointToLocal:(CLLocationCoordinate2D) localPoint {
     NSLog(@"------  savePointToLocal");
     //Write location to file
-    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(localPoint.latitude),@(localPoint.longitude),@"background"] forKeys:@[@"lat",@"long",@"type"]];
+    NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@(localPoint.latitude),@(localPoint.longitude),[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]],@"background"] forKeys:@[@"lat",@"long",@"created_at",@"type"]];
     [Common writeObjToFileTrackingLocation:dicObj];
 }
 

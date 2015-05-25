@@ -172,30 +172,39 @@
 
 + (NSString *) returnStringArrayLat:(NSMutableArray *) arrData {
     NSString *strReturn = @"";
+    NSMutableArray *arrLats = [[NSMutableArray alloc] init];
     if ([arrData count] > 0) {
         for (int i = 0; i < [arrData count]; i++) {
-            CLLocation *objLocation = [arrData objectAtIndex:i];
-            if (i == [arrData count] - 1) {
-                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@", @(objLocation.coordinate.latitude)]];
-            } else {
-                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@;", @(objLocation.coordinate.latitude)]];
-            }
+            NSDictionary *dicObj = [arrData objectAtIndex:i];
+            [arrLats addObject:dicObj[@"lat"]];
         }
+        strReturn = [arrLats componentsJoinedByString:@";"];
     }
     return strReturn;
 }
 
 + (NSString *) returnStringArrayLong:(NSMutableArray *) arrData {
     NSString *strReturn = @"";
+    NSMutableArray *arrLongs = [[NSMutableArray alloc] init];
     if ([arrData count] > 0) {
         for (int i = 0; i < [arrData count]; i++) {
-            CLLocation *objLocation = [arrData objectAtIndex:i];
-            if (i == [arrData count] - 1) {
-                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@", @(objLocation.coordinate.longitude)]];
-            } else {
-                strReturn = [NSString stringWithFormat:@"%@%@", strReturn, [NSString stringWithFormat:@"%@;", @(objLocation.coordinate.longitude)]];
-            }
+            NSDictionary *dicObj = [arrData objectAtIndex:i];
+            [arrLongs addObject:dicObj[@"long"]];
         }
+        strReturn = [arrLongs componentsJoinedByString:@";"];
+    }
+    return strReturn;
+}
+
++ (NSString *) returnStringArrayCreatedAtLocation:(NSMutableArray *) arrData {
+    NSString *strReturn = @"";
+    NSMutableArray *arrCreatedAt = [[NSMutableArray alloc] init];
+    if ([arrData count] > 0) {
+        for (int i = 0; i < [arrData count]; i++) {
+            NSDictionary *dicObj = [arrData objectAtIndex:i];
+            [arrCreatedAt addObject:dicObj[@"created_at"]];
+        }
+        strReturn = [arrCreatedAt componentsJoinedByString:@";"];
     }
     return strReturn;
 }

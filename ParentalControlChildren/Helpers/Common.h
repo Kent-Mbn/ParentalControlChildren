@@ -46,6 +46,7 @@
 
 + (NSString *) returnStringArrayLat:(NSMutableArray *) arrData;
 + (NSString *) returnStringArrayLong:(NSMutableArray *) arrData;
++ (NSString *) returnStringArrayCreatedAtLocation:(NSMutableArray *) arrData;
 + (NSArray *) returnArrayLocations:(NSString *) strLats andLongs:(NSString *)strLongs;
 
 + (void) addContactToArrayUserDefault:(NSArray *) arrIds andArrPhoneNumbers:(NSArray *)arrPhones;

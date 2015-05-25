@@ -14,8 +14,8 @@
 #define timePauseTrackingLocation 5
 #define timeCheckingSafeArea 60
 
-#define timeTrackingSaveLocations 300
-#define timeTrackingSaveLocationsMoving 30
+#define timeTrackingSaveLocations 30
+#define timeTrackingSaveLocationsMoving 5
 #define radiusTrackingSaveLocationMoving 100
 
 #define timeUpdateSafeAreaHome 10

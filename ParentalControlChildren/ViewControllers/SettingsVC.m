@@ -18,10 +18,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     _viewTopBar.backgroundColor = masterColor;
-    
-    //Load all location and show to map
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    NSLog(@"Tracking location: %@", arrDataLocation);
 }
 
 - (void)didReceiveMemoryWarning {

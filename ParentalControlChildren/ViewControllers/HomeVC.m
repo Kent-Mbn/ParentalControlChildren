@@ -36,10 +36,7 @@
 }
 
 - (void) viewDidAppear:(BOOL)animated {
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    NSLog(@"Tracking location: %@", arrDataLocation);
     
-   // [Common showAlertView:APP_NAME message:[NSString stringWithFormat:@"%@", arrDataLocation] delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
 }
 
 - (void) viewDidDisappear:(BOOL)animated {
@@ -155,28 +152,6 @@
     MKPointAnnotation *point = [[MKPointAnnotation alloc] init];
     point.coordinate = location;
     [_mapView addAnnotation:point];
-}
-
-- (void) callWSUpdateHistoryLocation:(CLLocationCoordinate2D)curLocation andAddress:(NSString *)strAddr {
-    [Common showNetworkActivityIndicator];
-    AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
-    NSMutableDictionary *request_param = [@{
-                                            @"latitude":@(curLocation.latitude),
-                                            @"longitude":@(curLocation.longitude),
-                                            @"address":strAddr,
-                                            } mutableCopy];
-    NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
-    [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        [Common hideNetworkActivityIndicator];
-        NSLog(@"response: %@", responseObject);
-        if ([Common validateRespone:responseObject]) {
-            //Success
-        } else {
-            //Return error
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        [Common hideNetworkActivityIndicator];
-    }];
 }
 
 - (void) callWSGetSafeArea {
