@@ -21,7 +21,7 @@
 #define timeUpdateSafeAreaHome 10
 
 //met
-#define distanceCheckingFilter 0
+#define distanceCheckingFilter 100
 
 #pragma mark - CODE RESPONE FROM SERVER
 #define CODE_RESPONE_SUCCESS 0

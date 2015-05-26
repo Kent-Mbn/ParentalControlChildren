@@ -244,32 +244,6 @@
     }
 }
 
-/*
-- (void) saveLocationNilToLocal {
-    //Save locations (0;0) to local file
-    //Get time NOW and minus time saved -> devide for timeTrakingMoving -> count of location (0;0) -> save to local file
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    NSString *strIsPaired = [UserDefault user].isPaired;
-    if ([arrDataLocation count] > 0 && [Common isValidString:strIsPaired] && [strIsPaired isEqualToString:@"YES"]) {
-        float timeWhenAppTerminate = 0;
-        float timeSaved = [[Common getTimeWhenTerminateApp] floatValue];
-        float timeNow = [[NSDate date] timeIntervalSince1970];
-        int countOfArrayLocationNil = 0;
-        
-        if(timeSaved > 0) {
-            timeWhenAppTerminate = timeNow - timeSaved;
-            countOfArrayLocationNil = timeWhenAppTerminate / timeTrackingSaveLocationsMoving;
-            for (int i = 0; i < countOfArrayLocationNil; i++) {
-                //Write location to file
-                NSDictionary *dicObj = [NSDictionary dictionaryWithObjects:@[@"0",@"0",[NSString stringWithFormat:@"%.0f", [[NSDate date] timeIntervalSince1970]],@"background"] forKeys:@[@"lat",@"long",@"created_at",@"type"]];
-                [Common writeObjToFileTrackingLocation:dicObj];
-            }
-        }
-    }
-}
- */
-
-
 #pragma mark - ALERT DELEGATE
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == 1 && alertView.tag == 1) {

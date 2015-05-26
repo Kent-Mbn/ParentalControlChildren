@@ -147,7 +147,16 @@
     //Get data
     NSMutableArray *arrInit = [self readFileLocalTrackingLocation];
     if (arrInit != nil) {
-        [arrInit addObject:dicObj];
+        //Checking distance before add to file
+        NSDictionary *lastObj = (NSDictionary *)[arrInit lastObject];
+        CLLocationCoordinate2D pointNew = [self get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", dicObj[@"lat"], dicObj[@"long"]]];
+        CLLocationCoordinate2D pointLast = [self get2DCoordFromString:[NSString stringWithFormat:@"%@,%@", lastObj[@"lat"], lastObj[@"long"]]];
+        NSLog(@"Distance filter: %f", [self calDistanceTwoCoordinate:pointNew andSecondPoint:pointLast]);
+        if ([self calDistanceTwoCoordinate:pointNew andSecondPoint:pointLast] > distanceCheckingFilter) {
+            [arrInit addObject:dicObj];
+        } else {
+            return;
+        }
     } else {
         arrInit = [[NSMutableArray alloc] init];
         [arrInit addObject:dicObj];
