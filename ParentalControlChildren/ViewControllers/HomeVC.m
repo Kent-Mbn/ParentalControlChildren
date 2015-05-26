@@ -31,7 +31,6 @@
 }
 
 - (void) viewWillAppear:(BOOL)animated {
-    //[self callWSGetSafeArea];
     [self startTimerUpdateSafeArea];
 }
 
@@ -146,6 +145,11 @@
     //pointAnn.subtitle = placemark.name;
     [_mapView addAnnotation:pointAnn];
     [_mapView selectAnnotation:pointAnn animated:YES];
+    
+    //Zooming if has only tracking location, no safe area
+    if (radiusCircle == 0 && [_arrayForPolygon count] == 0) {
+        [_mapView setRegion:MKCoordinateRegionMakeWithDistance(point, 500, 500) animated:YES];
+    }
 }
 
 -(void) addPinViewToMap:(CLLocationCoordinate2D) location {
@@ -265,7 +269,6 @@
             [_mapView removeAnnotations:_mapView.annotations];
             CLLocation *locationUpdate = [[CLLocation alloc] initWithLatitude:[theData[@"lat"] doubleValue] longitude:[theData[@"long"] doubleValue]];
             [self addAndFocusPinViewToMap:locationUpdate];
-            [self zoomToFitMapAnnotations];
         }
     }
 }
