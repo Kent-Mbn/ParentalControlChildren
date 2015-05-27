@@ -55,4 +55,14 @@
         [Common showAlertView:APP_NAME message:MSS_CONTENT_IS_NULL delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
     }
 }
+
+#pragma mark UITEXTVIEW DELEGATE
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if (textView.text.length > maxCharacterInTextView) {
+        textView.text = [textView.text substringToIndex:maxCharacterInTextView - 2];
+        [Common showAlertView:APP_NAME message:MSS_CONTENT_IS_TOO_LARGE delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
+        return NO;
+    }
+    return YES;
+}
 @end

@@ -23,6 +23,9 @@
 //met
 #define distanceCheckingFilter 100
 
+//Text view
+#define maxCharacterInTextView 150
+
 #pragma mark - CODE RESPONE FROM SERVER
 #define CODE_RESPONE_SUCCESS 0
 
@@ -56,3 +59,4 @@
 
 #pragma mark - EDIT MESSAGE
 #define MSS_CONTENT_IS_NULL @"Content messge is not blank!"
+#define MSS_CONTENT_IS_TOO_LARGE @"Content messge is too large!"

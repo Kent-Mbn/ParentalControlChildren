@@ -11,7 +11,7 @@
 #import "UserDefault.h"
 #import "Common.h"
 
-@interface EditSMSMessageVC : UIViewController
+@interface EditSMSMessageVC : UIViewController<UITextViewDelegate>
 - (IBAction)actionBack:(id)sender;
 - (IBAction)actionDone:(id)sender;
 @property (weak, nonatomic) IBOutlet UIView *viewTopBar;
