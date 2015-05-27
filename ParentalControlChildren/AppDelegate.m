@@ -588,10 +588,14 @@
 - (void) callPushNotification:(NSString *)parentDevice {
     [Common showNetworkActivityIndicator];
     AFHTTPRequestOperationManager *manager = [Common AFHTTPRequestOperationManagerReturn];
+    NSString *messageString = [UserDefault user].content_mss;
+    if (messageString.length == 0) {
+        messageString = CONTENT_MSS_NOTIFY_DEFAULT;
+    }
     NSMutableDictionary *request_param = [@{
                                             @"device_token":parentDevice,
                                             @"push_to":@"parent",
-                                            @"message":MSS_PUSH_NOTI_OUT_SAFE_AREA,
+                                            @"message":messageString,
                                             @"pusher_id":[UserDefault user].child_id,
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_PUSH_NOTIFICATION));

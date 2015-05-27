@@ -104,12 +104,14 @@
     tableView.separatorColor = [UIColor blackColor];
     
     PersonContactObj *obj;
-    
+    //cell.accessoryView.backgroundColor = [UIColor darkGrayColor];
     if (tableView == self.searchDisplayController.searchResultsTableView) {
+        cell.accessoryView = cell.btCheckUncheckSearch;
         obj = [_searchResults objectAtIndex:indexPath.row];
         cell.btCheckUnCheck.hidden = YES;
         cell.btCheckUncheckSearch.hidden = NO;
     } else {
+        cell.accessoryView = cell.btCheckUnCheck;
         obj = [_arrContacts objectAtIndex:indexPath.row];
         cell.btCheckUnCheck.hidden = NO;
         cell.btCheckUncheckSearch.hidden = YES;
@@ -134,7 +136,7 @@
     } else {
         cell.imgAvatar.image = [UIImage imageNamed:@"ic_people.png"];
     }
-    
+    cell.backgroundColor = [UIColor darkGrayColor];
     return cell;
 }
 
