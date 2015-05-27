@@ -440,15 +440,19 @@
             } else {
                 //Draw polygon
                 typeSafeArea = polygonShape;
-                [[UserDefault user] setRadiusCircle:@"0"];
                 NSMutableArray *arrLocations = [[NSMutableArray alloc] init];
+                NSMutableArray *arrLongs = [[NSMutableArray alloc] init];
+                NSMutableArray *arrLats = [[NSMutableArray alloc] init];
                 for (int i = 0; i < [arrSafeAreaData count]; i++) {
                     NSDictionary *objPoint = [arrSafeAreaData objectAtIndex:i];
                     CLLocation *locationPoint = [[CLLocation alloc] initWithLatitude:[objPoint[@"latitude"] doubleValue] longitude:[objPoint[@"longitude"] doubleValue]];
                     [arrLocations addObject:locationPoint];
+                    [arrLats addObject:[NSString stringWithFormat:@"%@", objPoint[@"latitude"]]];
+                    [arrLongs addObject:[NSString stringWithFormat:@"%@", objPoint[@"longitude"]]];
                 }
-                [[UserDefault user] setLats:[Common returnStringArrayLat:arrLocations]];
-                [[UserDefault user] setLongs:[Common returnStringArrayLong:arrLocations]];
+                [[UserDefault user] setLats:[arrLats componentsJoinedByString:@";"]];
+                [[UserDefault user] setLongs:[arrLongs componentsJoinedByString:@";"]];
+                [[UserDefault user] setRadiusCircle:@"0"];
                 [UserDefault update];
                 
                 _arrayForPolygon = arrLocations;
