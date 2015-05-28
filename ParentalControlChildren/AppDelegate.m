@@ -138,18 +138,6 @@
     // Saves changes in the application's managed object context before the application terminates.
     [self saveContext];
     
-    //Remove all data
-    //[Common removeFileLocalTrackingLocation];
-    
-    /*
-    //Check to save location (0;0) to file local
-    //If file local has data and is Paired = YES
-    NSMutableArray *arrDataLocation = [Common readFileLocalTrackingLocation];
-    NSString *strIsPaired = [UserDefault user].isPaired;
-    if ([arrDataLocation count] > 0 && [Common isValidString:strIsPaired] && [strIsPaired isEqualToString:@"YES"]) {
-        [Common updateTimeWhenTerminateApp:[NSString stringWithFormat:@"%.0f", [[NSDate date] timeIntervalSince1970]]];
-    }
-     */
 }
 
 #pragma mark - NOTIFICATION DELEGATE
