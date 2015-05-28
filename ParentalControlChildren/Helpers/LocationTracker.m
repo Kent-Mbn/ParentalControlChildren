@@ -119,9 +119,30 @@
     CLLocationManager *locationManager = [LocationTracker sharedLocationManager];
     [locationManager stopUpdatingLocation];
     
-    //Only get last location
-    //NSLog(@"Update locations: %@", locations);
-    CLLocation * newLocation = [locations lastObject];
+    //Only get best location
+    int indexOfBestObj = 0;
+    if ([locations count] > 0) {
+        double minAccurancy = 0;
+        for (int i = 0; i < [locations count]; i++) {
+            CLLocation *objLocation = [locations objectAtIndex:i];
+            if (i == 0) {
+                minAccurancy = objLocation.horizontalAccuracy;
+            } else {
+                if (objLocation.horizontalAccuracy < minAccurancy) {
+                    minAccurancy = objLocation.horizontalAccuracy;
+                    indexOfBestObj = i;
+                }
+            }
+        }
+    }
+    
+    CLLocation * newLocation;
+    if ([locations count] > 0) {
+        newLocation = [locations objectAtIndex:indexOfBestObj];
+    } else {
+        newLocation = [locations lastObject];
+    }
+    
     self.myLastLocation = newLocation.coordinate;
     self.myLastLocationAccuracy= newLocation.horizontalAccuracy;
     
