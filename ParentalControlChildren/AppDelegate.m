@@ -60,7 +60,7 @@
                                                  selector:@selector(returnNewLocation:)
                                                      name:kNotificationGetNewLocation
                                                    object:nil];
-        /* INIT for filled app */
+        /* INIT for killed app */
         if ([launchOptions objectForKey:UIApplicationLaunchOptionsLocationKey]) {
             // This "afterResume" flag is just to show that he receiving location updates
             // are actually from the key "UIApplicationLaunchOptionsLocationKey"
@@ -184,11 +184,14 @@
             //Save is Paired and device token of parent
             [UserDefault user].isPaired = @"YES";
             [[UserDefault user] update];
+            
+            /*
             if ([[UserDefault user].isPaired isEqualToString:@"YES"]) {
                 //Start system checking safe area
                 [self beginCheckingSafeArea];
                 [self beginTrackingSaveLocations];
             }
+             */
             
             [Common showAlertView:APP_NAME message:MSS_CONFIRM_SUCCESS delegate:self cancelButtonTitle:@"OK" arrayTitleOtherButtons:nil tag:0];
         } else {
@@ -624,6 +627,11 @@
                                                                      userInfo:nil
                                                                       repeats:YES];
     centerTrackingMoving = middleTrackingMoving = lastLocationAppDelegate;
+    
+    //Send new location to server immediatetly
+    if ([Common isValidCoordinate:lastLocationAppDelegate]) {
+        [self callWSAddNewLocation:lastLocationAppDelegate];
+    }
 }
 
 - (void) restartTrackingSaveLocationsMoving {
@@ -647,6 +655,7 @@
                                             @"latitude":@(newPoint.latitude),
                                             @"longitude":@(newPoint.longitude),
                                             @"address":@"address",
+                                            @"created_at":[NSString stringWithFormat:@"%.0f",[[NSDate date] timeIntervalSince1970]],
                                             } mutableCopy];
     NSLog(@"request_param: %@ %@", request_param, URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)));
     [manager POST:URL_SERVER_API(API_ADD_NEW_HISTORY_DEVICE([UserDefault user].child_id)) parameters:request_param success:^(AFHTTPRequestOperation *operation, id responseObject) {
